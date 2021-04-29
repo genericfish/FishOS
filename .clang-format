@@ -1,0 +1,27 @@
+Standard: Cpp11
+BasedOnStyle: WebKit
+IndentWidth: 4
+ColumnLimit: 100
+AccessModifierOffset: -4
+NamespaceIndentation: Inner
+AlignOperands: Align
+AlignConsecutiveMacros: true
+AlignAfterOpenBracket: Align
+AllowShortFunctionsOnASingleLine: All
+AllowShortEnumsOnASingleLine: true
+BreakConstructorInitializers: BeforeComma
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: false
+  AfterStruct: false
+  AfterClass: false
+  SplitEmptyFunction: false
+  AfterControlStatement: MultiLine
+  AfterNamespace: false
+  AfterFunction: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: false
+  BeforeElse: false
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true

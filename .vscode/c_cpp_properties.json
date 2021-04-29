@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "name": "Fish",
+            "includePath": [
+                "${workspaceFolder}/FSH",
+                "${workspaceFolder}/Libraries/LibC",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "${workspaceFolder}/Toolchain/Local/bin/i686-elf-g++",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++20",
+            "intelliSenseMode": "msvc-x86",
+            "compilerArgs": [
+                "-ffreestanding",
+                "-fno-rtti",
+                "-nostdlib",
+                "-nostdinc",
+                "-nostdinc++"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/FSH",
+                    "${workspaceFolder}/Libraries/LibC",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,11 @@
+#file(GLOB_RECURSE headers RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.h")
+#foreach(header ${headers})
+#    get_filename_component(subdirectory ${header} DIRECTORY)
+#    install(FILES ${header} DESTINATION /home/brandon/include/${subdirectory})
+#endforeach()
+
+file(GLOB_RECURSE sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.h" "*.cpp")
+foreach(source ${sources})
+    get_filename_component(subdirectory ${source} DIRECTORY)
+    install(FILES ${source} DESTINATION bin)
+endforeach()
