@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.20)
 project(FishOS ASM CXX C)
 
 # FIXME: Do not hardcode the compiler path
-set(CMAKE_C_COMPILER "/home/brandon/projects/fish/Toolchain/Local/bin/i686-elf-gcc")
-set(CMAKE_CXX_COMPILER "/home/brandon/projects/fish/Toolchain/Local/bin/i686-elf-g++")
-set(CMAKE_ASM_COMPILER "/home/brandon/projects/fish/Toolchain/Local/bin/i686-elf-as")
+set(CMAKE_C_COMPILER "${PROJECT_SOURCE_DIR}/Toolchain/Local/bin/i686-elf-gcc")
+set(CMAKE_CXX_COMPILER "${PROJECT_SOURCE_DIR}/Toolchain/Local/bin/i686-elf-g++")
+set(CMAKE_ASM_COMPILER "${PROJECT_SOURCE_DIR}/Toolchain/Local/bin/i686-elf-as")
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
