@@ -1,15 +1,72 @@
 #!/usr/bin/env bash
 set -e
 
-# GCC/Binutils information
-BINUTILS_VERSION=2.36.1
-BINUTILS_NAME="binutils-$BINUTILS_VERSION"
-GCC_VERSION=11.1.0
-GCC_NAME="gcc-$GCC_VERSION"
-
 # Variables
 DIR=$(pwd)
 NTHREADS=$(($(nproc --all) + 1))
+
+# GCC/Binutils Information
+BINUTILS_VERSION=2.36.1
+GCC_VERSION=11.1.0
+
+BINUTILS_NAME="binutils-$BINUTILS_VERSION"
+GCC_NAME="gcc-$GCC_VERSION"
+
+BINUTILS_TAR=${BINUTILS_NAME}.tar.xz
+GCC_TAR=${GCC_NAME}.tar.xz
+
+# GCC/Binutils Source URLs
+BINUTILS_URL="http://ftp.gnu.org/gnu/binutils"
+GCC_URL="https://ftp.gnu.org/gnu/gcc/"
+
+BINUTILS_SOURCE_URL="${BINUTILS_URL}/${BINUTILS_TAR}"
+GCC_SOURCE_URL="${GCC_URL}/${GCC_NAME}/${GCC_TAR}"
+
+BINUTILS_SIG_URL="${BINUTILS_SOURCE_URL}.sig"
+GCC_SIG_URL="${GCC_SOURCE_URL}.sig"
+
+# Download GCC/Binutils Source
+mkdir -p Tarballs
+
+if [ ! -f Tarballs/${BINUTILS_TAR} ]; then
+    wget ${BINUTILS_SOURCE_URL} -P Tarballs/
+fi
+
+if [ ! -f Tarballs/${GCC_TAR} ]; then
+    wget ${GCC_SOURCE_URL} -P Tarballs/
+fi
+
+# Download GCC/Binutils Signatures
+mkdir -p Signatures
+
+rm -f Signatures/gnu-keyring.gpg
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg -P Signatures
+
+if [ ! -f Signatures/${BINUTILS_TAR}.sig ]; then
+    wget ${BINUTILS_SIG_URL} -P Signatures/
+fi
+
+if [ ! -f Signatures/${GCC_TAR}.sig ]; then
+    wget ${GCC_SIG_URL} -P Signatures/
+fi
+
+# Verify Signatures
+gpg --verify --keyring Signatures/gnu-keyring.gpg Signatures/${BINUTILS_TAR}.sig Tarballs/${BINUTILS_TAR}
+gpg --verify --keyring Signatures/gnu-keyring.gpg Signatures/${GCC_TAR}.sig Tarballs/${GCC_TAR}
+
+# Cleanup existing files
+rm -rf Build
+rm -rf Local
+rm -rf Source
+
+# Recreate directories
+mkdir -p Source
+mkdir -p Build
+mkdir -p Local
+
+# Extract
+tar -xf Tarballs/${BINUTILS_NAME}.tar.xz -C Source
+tar -xf Tarballs/${GCC_NAME}.tar.xz -C Source
 
 export PREFIX="$DIR/Local"
 export ARCH=i686
