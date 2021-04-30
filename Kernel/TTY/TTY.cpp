@@ -7,7 +7,7 @@
 
 static size_t constexpr VGA_WIDTH = 80;
 static size_t constexpr VGA_HEIGHT = 25;
-static u16* const VGA_MEMORY = reinterpret_cast<u16*>(0xB8000);
+static u16* const VGA_MEMORY = reinterpret_cast<u16*>(0xC03FF000);
 
 size_t terminal_row;
 size_t terminal_column;
