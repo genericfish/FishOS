@@ -5,14 +5,8 @@ set(KERNEL_SOURCES
     StdLib.cpp
     TTY/TTY.cpp
 )
-
-set(KERNEL_ASM
-    Arch/${FISH_ARCH}/boot.S
-)
-
-set(KERNEL_LD
-    Arch/${FISH_ARCH}/linker.ld
-)
+set(KERNEL_ASM ${CMAKE_CURRENT_SOURCE_DIR}/Arch/${FISH_ARCH}/boot.S)
+set(KERNEL_LD ${CMAKE_CURRENT_SOURCE_DIR}/Arch/${FISH_ARCH}/linker.ld)
 
 set(KERNEL_CXX_FLAGS
     -ffreestanding
@@ -30,7 +24,8 @@ add_custom_command(
     TARGET Kernel
     PRE_BUILD
     COMMAND
-        ${CMAKE_ASM_COMPILER} ${CMAKE_CURRENT_SOURCE_DIR}/${KERNEL_ASM} -o ${CMAKE_BINARY_DIR}/Boot/boot.o
+        ${CMAKE_ASM_COMPILER} ${KERNEL_ASM}
+        -o ${CMAKE_BINARY_DIR}/Boot/boot.o
 )
 
 target_compile_options(Kernel PUBLIC ${KERNEL_CXX_FLAGS})
@@ -48,5 +43,11 @@ set_target_properties(Kernel PROPERTIES
 add_custom_command(
     TARGET Kernel
     POST_BUILD
-    COMMAND ${CMAKE_CXX_COMPILER} ${KERNEL_CXX_FLAGS} -T ${CMAKE_CURRENT_SOURCE_DIR}/${KERNEL_LD} -o ${CMAKE_BINARY_DIR}/Boot/fish.kernel ${CMAKE_BINARY_DIR}/Boot/boot.o ${CMAKE_BINARY_DIR}/Boot/Kernel.a ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a
+    COMMAND
+        ${CMAKE_CXX_COMPILER} ${KERNEL_CXX_FLAGS}
+            -T ${KERNEL_LD}
+            -o ${CMAKE_BINARY_DIR}/Boot/fish.kernel
+            ${CMAKE_BINARY_DIR}/Boot/boot.o
+            ${CMAKE_BINARY_DIR}/Boot/Kernel.a
+            ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a
 )
