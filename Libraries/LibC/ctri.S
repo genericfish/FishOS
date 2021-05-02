@@ -11,4 +11,3 @@ _init:
 _fini:
     push %ebp
     movl %esp, %ebp
-
