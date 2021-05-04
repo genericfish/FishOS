@@ -17,32 +17,23 @@ set(KERNEL_CXX_FLAGS
     -nostdinc++
 )
 
-add_library(Kernel ${KERNEL_SOURCES})
-add_dependencies(Kernel LibK)
-
 add_custom_command(
-    TARGET Kernel
-    PRE_BUILD
+    OUTPUT ${CMAKE_BINARY_DIR}/Boot/boot.o
     COMMAND
         ${CMAKE_ASM_COMPILER} ${KERNEL_ASM}
         -o ${CMAKE_BINARY_DIR}/Boot/boot.o
+    DEPENDS
+        ${KERNEL_ASM}
 )
 
-target_compile_options(Kernel PUBLIC ${KERNEL_CXX_FLAGS})
-target_include_directories(Kernel
-    PRIVATE .
-    PRIVATE ../
-    PRIVATE ../Libraries/LibC
-)
-target_link_libraries(Kernel "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a")
-set_target_properties(Kernel PROPERTIES
-    PREFIX ""
-    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Boot
+add_custom_target(boot.o
+    ALL
+    DEPENDS
+        ${CMAKE_BINARY_DIR}/Boot/boot.o
 )
 
 add_custom_command(
-    TARGET Kernel
-    POST_BUILD
+    OUTPUT ${CMAKE_BINARY_DIR}/Boot/generic.fish
     COMMAND
         ${CMAKE_CXX_COMPILER} ${KERNEL_CXX_FLAGS}
             -T ${KERNEL_LD}
@@ -50,4 +41,30 @@ add_custom_command(
             ${CMAKE_BINARY_DIR}/Boot/boot.o
             ${CMAKE_BINARY_DIR}/Boot/Kernel.a
             ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a
+    DEPENDS
+        KernelObj
+        LibK
+        boot.o
+        ${KERNEL_LD}
+)
+
+add_custom_target(Kernel
+    ALL
+    DEPENDS
+        ${CMAKE_BINARY_DIR}/Boot/generic.fish
+)
+
+add_library(KernelObj ${KERNEL_SOURCES})
+add_dependencies(KernelObj LibK boot.o)
+
+target_compile_options(KernelObj PUBLIC ${KERNEL_CXX_FLAGS})
+target_include_directories(KernelObj
+    PRIVATE .
+    PRIVATE ../
+    PRIVATE ../Libraries/LibC
+)
+target_link_libraries(KernelObj "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a")
+set_target_properties(KernelObj PROPERTIES
+    PREFIX ""
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Boot
 )
