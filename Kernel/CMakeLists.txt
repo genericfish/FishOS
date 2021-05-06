@@ -1,6 +1,7 @@
 add_compile_options(-Os)
 
 set(KERNEL_SOURCES
+    Interrupts/IDT.cpp
     Kernel.cpp
     StdLib.cpp
     TTY/TTY.cpp
