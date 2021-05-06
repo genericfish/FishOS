@@ -438,3 +438,144 @@ isr_common:
     add $(8), %esp
     sti
     iret
+
+.global irq0
+.global irq1
+.global irq2
+.global irq3
+.global irq4
+.global irq5
+.global irq6
+.global irq7
+.global irq8
+.global irq9
+.global irq10
+.global irq11
+.global irq12
+.global irq13
+.global irq14
+.global irq15
+
+irq0:
+    cli
+    push 0
+    push 32
+    jmp irq_common
+
+irq1:
+    cli
+    push 0
+    push 33
+    jmp irq_common
+
+irq2:
+    cli
+    push 0
+    push 34
+    jmp irq_common
+
+irq3:
+    cli
+    push 0
+    push 35
+    jmp irq_common
+
+irq4:
+    cli
+    push 0
+    push 36
+    jmp irq_common
+
+irq5:
+    cli
+    push 0
+    push 37
+    jmp irq_common
+
+irq6:
+    cli
+    push 0
+    push 38
+    jmp irq_common
+
+irq7:
+    cli
+    push 0
+    push 39
+    jmp irq_common
+
+irq8:
+    cli
+    push 0
+    push 40
+    jmp irq_common
+
+irq9:
+    cli
+    push 0
+    push 41
+    jmp irq_common
+
+irq10:
+    cli
+    push 0
+    push 42
+    jmp irq_common
+
+irq11:
+    cli
+    push 0
+    push 43
+    jmp irq_common
+
+irq12:
+    cli
+    push 0
+    push 44
+    jmp irq_common
+
+irq13:
+    cli
+    push 0
+    push 45
+    jmp irq_common
+
+irq14:
+    cli
+    push 0
+    push 46
+    jmp irq_common
+
+irq15:
+    cli
+    push 0
+    push 47
+    jmp irq_common
+
+irq_common:
+    pusha
+    push %ds
+    push %es
+    push %fs
+    push %gs
+
+    mov (DATA_SEG), %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
+    mov %esp, %eax
+    push %eax
+
+    call irq_handler
+
+    pop %eax
+    pop %gs
+    pop %fs
+    pop %es
+    pop %ds
+    popa
+
+    add $(8), %esp
+    sti
+    iret

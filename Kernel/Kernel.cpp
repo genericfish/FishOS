@@ -1,5 +1,7 @@
 #include <FSH/Types.h>
+
 #include <Kernel/Interrupts/IDT.h>
+#include <Kernel/Interrupts/IRQ.h>
 #include <Kernel/Interrupts/ISR.h>
 #include <Kernel/TTY/TTY.h>
 
@@ -11,6 +13,9 @@ void kernel_main() {
 
     idt_install();
     isr_install();
+    irq_install();
+
+    asm ("sti");
 
     printf("      ===================          ====\n");
     printf("    ===                 ===       == ==\n");
