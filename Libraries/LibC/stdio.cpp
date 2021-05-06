@@ -101,6 +101,35 @@ int printf(char const* restrict format, ...) {
             continue;
         }
 
+        if (*format == 'd') {
+            format++;
+            auto d = va_arg(parameters, int);
+            const char* lookup[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+            if (!maxrem)
+                return -1;
+
+            if (d < 0) {
+                if (!print("-", 1))
+                    return -1;
+
+                written++;
+            }
+
+            while (d) {
+                auto digit = d % 10;
+
+                if (!print(lookup[digit], 1))
+                    return -1;
+
+                written++;
+
+                d /= 10;
+            }
+
+            continue;
+        }
+
         format = format_begun_at;
         auto len = strlen(format);
 
