@@ -149,9 +149,7 @@ gdt_descriptor:
     .word gdt_end - gdt_start - 1
     .long gdt_start
 
-.global CODE_SEG
 .set CODE_SEG, gdt_code - gdt_start
-.global DATA_SEG
 .set DATA_SEG, gdt_data - gdt_start
 
 load_gdt:
@@ -438,4 +436,5 @@ isr_common:
     popa
 
     add $(8), %esp
+    sti
     iret
