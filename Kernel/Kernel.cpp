@@ -1,5 +1,6 @@
 #include <FSH/Types.h>
 #include <Kernel/Interrupts/IDT.h>
+#include <Kernel/Interrupts/ISR.h>
 #include <Kernel/TTY/TTY.h>
 
 #include <stdio.h>
@@ -9,6 +10,7 @@ void kernel_main() {
     terminal_initialize();
 
     idt_install();
+    isr_install();
 
     printf("      ===================          ====\n");
     printf("    ===                 ===       == ==\n");
