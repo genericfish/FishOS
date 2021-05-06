@@ -8,6 +8,11 @@
 #endif
 #define FLATTEN [[gnu::flatten]]
 
+#ifdef PACKED
+#undef PACKED
+#endif
+#define PACKED __attribute__((packed))
+
 #ifdef NEVER_INLINE
 #undef NEVER_INLINE
 #endif
