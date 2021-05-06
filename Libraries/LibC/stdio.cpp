@@ -40,7 +40,12 @@ int printf(char const* restrict format, ...) {
     int written = 0;
 
     while (*format != '\0') {
-        auto maxrem = INT_MAX - written;
+        auto rst = INT_MAX - written;
+
+        if (rst < 0)
+            return -1;
+
+        auto maxrem = static_cast<u32>(rst);
 
         if (format[0] != '%' || format[1] == '%') {
             if (format[0] == '%')
@@ -51,7 +56,7 @@ int printf(char const* restrict format, ...) {
             while (format[amount] && format[amount] != '%')
                 amount++;
 
-            if (maxrem < amount) // FIXME: EOVERFLOW
+            if (maxrem < amount)
                 return -1;
 
             if (!print(format, amount))
@@ -69,7 +74,7 @@ int printf(char const* restrict format, ...) {
             format++;
             auto c = static_cast<char>(va_arg(parameters, int));
 
-            if (!maxrem) // FIXME: EOVERFLOW
+            if (!maxrem)
                 return -1;
 
             if (!print(format, sizeof(c)))
@@ -85,7 +90,7 @@ int printf(char const* restrict format, ...) {
             auto const* str = va_arg(parameters, char const*);
             auto len = strlen(str);
 
-            if (maxrem < len) // FIXME: EOVERFLOW
+            if (maxrem < len)
                 return -1;
 
             if (!print(str, len))
