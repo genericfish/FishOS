@@ -3,13 +3,12 @@ ENTRY(_start)
 VIRTUAL_BASE_ADDR = 0xC0000000;
 
 SECTIONS {
-    . = VIRTUAL_BASE_ADDR + 0x00100000;
+    . = VIRTUAL_BASE_ADDR + 0x100000;
 
     _kernel_start = .;
 
     .text ALIGN(4K) : AT (ADDR(.text) - VIRTUAL_BASE_ADDR) {
-        *(.multiboot.data)
-        *(.multiboot.text)
+        *(.multiboot)
         *(.text)
     }
 
