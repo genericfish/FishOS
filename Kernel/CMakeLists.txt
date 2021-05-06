@@ -46,6 +46,7 @@ add_custom_command(
         LibK
         boot.o
         ${KERNEL_LD}
+        ${KERNEL_ASM}
 )
 
 add_custom_target(Kernel
