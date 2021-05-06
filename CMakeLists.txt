@@ -22,12 +22,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 set(FISH_ARCH i686)
 
-#add_subdirectory(FSH)
+add_subdirectory(FSH)
 add_subdirectory(Kernel)
 add_subdirectory(Libraries)
 
 add_custom_target(run
-    COMMAND qemu-system-i386 -kernel ${CMAKE_BINARY_DIR}/Boot/fish.kernel
+    COMMAND qemu-system-i386 -kernel ${CMAKE_BINARY_DIR}/Root/boot/fish.kernel
 )
 
 add_dependencies(run Kernel)

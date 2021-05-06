@@ -33,11 +33,11 @@ add_custom_target(boot.o
 )
 
 add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/Boot/generic.fish
+    OUTPUT ${CMAKE_BINARY_DIR}/Root/boot/fish.kernel
     COMMAND
         ${CMAKE_CXX_COMPILER} ${KERNEL_CXX_FLAGS}
             -T ${KERNEL_LD}
-            -o ${CMAKE_BINARY_DIR}/Boot/fish.kernel
+            -o ${CMAKE_BINARY_DIR}/Root/boot/fish.kernel
             ${CMAKE_BINARY_DIR}/Boot/boot.o
             ${CMAKE_BINARY_DIR}/Boot/Kernel.a
             ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a
@@ -51,7 +51,7 @@ add_custom_command(
 add_custom_target(Kernel
     ALL
     DEPENDS
-        ${CMAKE_BINARY_DIR}/Boot/generic.fish
+        ${CMAKE_BINARY_DIR}/Root/boot/fish.kernel
 )
 
 add_library(KernelObj ${KERNEL_SOURCES})
