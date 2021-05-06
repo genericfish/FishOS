@@ -113,19 +113,7 @@ _start:
     mov $stack_top, %esp
 
     # Load GDT
-    lgdt (gdt_descriptor)
-
-    # Flush registers
-    xor %eax, %eax
-
-    # Move GDT data segment into ax
-    mov $(DATA_SEG), %ax
-
-    mov %eax, %ds
-    mov %eax, %es
-    mov %eax, %ss
-    mov %eax, %fs
-    mov %eax, %gs
+    call load_gdt
 
 5:
     # Enter high-level kernel
@@ -163,3 +151,22 @@ gdt_descriptor:
 
 .set CODE_SEG, gdt_code - gdt_start
 .set DATA_SEG, gdt_data - gdt_start
+
+load_gdt:
+    # Load GDT
+    lgdt (gdt_descriptor)
+
+    # Clear EAX register
+    xor %eax, %eax
+
+    # Move GDT data segment into ax
+    mov $(DATA_SEG), %ax
+
+    # Flush GDT registers
+    mov %eax, %ds
+    mov %eax, %es
+    mov %eax, %ss
+    mov %eax, %fs
+    mov %eax, %gs
+
+    ret
