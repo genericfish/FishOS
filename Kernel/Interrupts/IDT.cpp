@@ -5,9 +5,6 @@
 
 #include <string.h>
 
-extern u32 CODE_SEG;
-extern u32 DATA_SEG;
-
 struct PACKED IDT_entry {
     u16 base_lo;
     u16 sel;
@@ -23,7 +20,7 @@ struct PACKED IDT_ptr {
 
 IDT_entry idt[256];
 
-constexpr void idt_set_gate(u8 num, u32 base, u16 sel, u8 flags) {
+void idt_set_gate(u8 num, u32 base, u16 sel, u8 flags) {
     u16 base_lo = base & 0xFFFF;
     u16 base_hi = (base >> 0xF) & 0xFFFF;
 
