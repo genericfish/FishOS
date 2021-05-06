@@ -1,5 +1,5 @@
 #include <FSH/Types.h>
-#include <Kernel/Interrupts/IDT.cpp>
+#include <Kernel/Interrupts/IDT.h>
 #include <Kernel/TTY/TTY.h>
 
 #include <stdio.h>
