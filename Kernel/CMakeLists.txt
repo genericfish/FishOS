@@ -39,7 +39,7 @@ add_custom_command(
             -T ${KERNEL_LD}
             -o ${CMAKE_BINARY_DIR}/Root/boot/fish.kernel
             ${CMAKE_BINARY_DIR}/Boot/boot.o
-            ${CMAKE_BINARY_DIR}/Boot/Kernel.a
+            ${CMAKE_BINARY_DIR}/Boot/KernelObj.a
             ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}/LibK.a
     DEPENDS
         KernelObj
