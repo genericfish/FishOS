@@ -6,7 +6,7 @@
 .set MULTIBOOT_ALIGN,       1<<0
 .set MULTIBOOT_MEMINFO,     1<<1
 .set MULTIBOOT_VIDEO_MODE,  1<<2
-.set MULTIBOOT_FLAGS,       MULTIBOOT_ALIGN | MULTIBOOT_MEMINFO | MULTIBOOT_VIDEO_MODE
+.set MULTIBOOT_FLAGS,       MULTIBOOT_ALIGN | MULTIBOOT_MEMINFO
 .set MULTIBOOT_MAGIC,       0x1BADB002
 .set MULTIBOOT_CHECKSUM,    -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
 
@@ -93,6 +93,11 @@ _start:
     movl $(boot_pgdir - VIRTUAL_BASE_ADDR), %ecx
     movl %ecx, %cr3
 
+    # Enable PSE
+    movl %cr4, %ecx
+    orl $0x00000010, %ecx
+    movl %ecx, %cr4
+
     # Enable paging and write-protect
     movl %cr0, %ecx
     orl $0x80010000, %ecx
@@ -103,7 +108,7 @@ _start:
     jmp *%ecx
 
 4:
-    movl $0, boot_pgdir    # Unmap identity mapping
+    movl $0, boot_pgdir + 0    # Unmap identity mapping
 
     # Reload crc3 for TLB flush
     movl %cr3, %ecx
@@ -112,470 +117,408 @@ _start:
     # Setup stack
     mov $stack_top, %esp
 
-    # Load GDT
-    call load_gdt
-
 5:
     # Enter high-level kernel
-    call kernel_main
+    call main
 
-    # Infinite loop
     cli
 1:  hlt
     jmp 1b
 
-gdt_start:
-gdt_null:
-    .quad 0
+.set KERNEL_CODE, 0x08
+.set KERNEL_DATA, 0x10
 
-gdt_code:
-    .word 0xFFFF        # limit [0, 15]
-    .word 0             # base [0, 15]
-    .byte 0             # base [16, 23]
-    .byte 0b10011010    # flags
-    .byte 0b11001111    # flags, limit [16, 19]
-    .byte 0             # base [24, 31]
-
-gdt_data:
-    .word 0xFFFF        # limit
-    .word 0             # base
-    .byte 0             # base
-    .byte 0b10010010    # flags
-    .byte 0b11001111    # flags, limit
-    .byte 0             # base
-
-gdt_end:
-gdt_descriptor:
-    .word gdt_end - gdt_start - 1
-    .long gdt_start
-
-.set CODE_SEG, gdt_code - gdt_start
-.set DATA_SEG, gdt_data - gdt_start
-
+.global load_gdt
 load_gdt:
-    # Load GDT
-    lgdt (gdt_descriptor)
+    # Disable Interrupts
+    cli
+    cld
 
-    # Clear EAX register
-    xor %eax, %eax
+    # Load GDT Pointer
+    movl 4(%esp), %eax
+    lgdt (%eax)
 
+    # Flush Registers
+    call flush_gdt
+
+    ret
+
+flush_gdt:
     # Move GDT data segment into ax
-    mov $(DATA_SEG), %ax
+    movw $KERNEL_DATA, %ax
 
     # Flush GDT registers
-    mov %eax, %ds
-    mov %eax, %es
-    mov %eax, %ss
-    mov %eax, %fs
-    mov %eax, %gs
+    movw %ax, %ds
+    movw %ax, %es
+    movw %ax, %ss
+    movw %ax, %fs
+    movw %ax, %gs
+
+    jmp $KERNEL_CODE, $flush_gdt_ret
+flush_gdt_ret:
+    ret
+
+.global load_idt
+load_idt:
+    # Disable Interrupts
+    cli
+    cld
+
+    # Load IDT Pointer
+    movl 4(%esp), %eax
+    lidt (%eax)
 
     ret
 
 .global isr0
-.global isr1
-.global isr2
-.global isr3
-.global isr4
-.global isr5
-.global isr6
-.global isr7
-.global isr8
-.global isr9
-.global isr10
-.global isr11
-.global isr12
-.global isr13
-.global isr14
-.global isr15
-.global isr16
-.global isr17
-.global isr18
-.global isr19
-.global isr20
-.global isr21
-.global isr22
-.global isr23
-.global isr24
-.global isr25
-.global isr26
-.global isr27
-.global isr28
-.global isr29
-.global isr30
-.global isr31
-
 isr0:
 //  Div. by 0
-    cli
-    push 0
-    push 0
+    push $0
+    push $0
 
     jmp isr_common
 
+.global isr1
 isr1:
 // Debug exception
-    cli
-    push 0
-    push 1
+    push $0
+    push $1
     jmp isr_common
 
+.global isr2
 isr2:
 // Non-maskable interrupt
-    cli
-    push 0
-    push 2
+    push $0
+    push $2
     jmp isr_common
 
+.global isr3
 isr3:
 // Breakpoint exception
-    cli
-    push 0
-    push 3
+    push $0
+    push $3
     jmp isr_common
 
+.global isr4
 isr4:
 // Detected overflow
-    cli
-    push 0
-    push 4
+    push $0
+    push $4
     jmp isr_common
 
+.global isr5
 isr5:
 // Out of bounds exception
-    cli
-    push 0
-    push 5
+    push $0
+    push $5
     jmp isr_common
 
+.global isr6
 isr6:
 // Invalid opcode
-    cli
-    push 0
-    push 6
+    push $0
+    push $6
     jmp isr_common
 
+.global isr7
 isr7:
 // No coprocessor exception
-    cli
-    push 0
-    push 7
+    push $0
+    push $7
     jmp isr_common
 
+.global isr8
 isr8:
 // Double fault
-    cli
-    push 8
+    push $8
     jmp isr_common
 
+.global isr9
 isr9:
 // Coprocessor segment overrun exception
-    cli
-    push 0
-    push 9
+    push $0
+    push $9
     jmp isr_common
 
+.global isr10
 isr10:
 // Bad TSS exception
-    cli
-    push 10
+    push $10
     jmp isr_common
 
+.global isr11
 isr11:
 // Segment not present exception
-    cli
-    push 11
+    push $11
     jmp isr_common
 
+.global isr12
 isr12:
 // Stack fault exception
-    cli
-    push 12
+    push $12
     jmp isr_common
 
+.global isr13
 isr13:
 // General protection fault exception
-    cli
-    push 13
+    push $13
     jmp isr_common
 
+.global isr14
 isr14:
 // Page fault
-    cli
-    push 14
+    mov $(0xabadbabe), %ebx
+    push $14
     jmp isr_common
 
+.global isr15
 isr15:
 // Unknown interrupt exception
-    cli
-    push 0
-    push 15
+    push $0
+    push $15
     jmp isr_common
 
+.global isr16
 isr16:
 // Coprocessor fault exception
-    cli
-    push 0
-    push 16
+    push $0
+    push $16
     jmp isr_common
 
+.global isr17
 isr17:
 // Alignment check exception
-    cli
-    push 0
-    push 17
+    push $0
+    push $17
     jmp isr_common
 
+.global isr18
 isr18:
 // Machine check exception
-    cli
-    push 0
-    push 18
+    push $0
+    push $18
     jmp isr_common
-
 // Exceptions 19-31 are reserved
+
+.global isr19
 isr19:
-    cli
-    push 0
-    push 19
+    push $0
+    push $19
     jmp isr_common
 
+.global isr20
 isr20:
-    cli
-    push 0
-    push 20
+    push $0
+    push $20
     jmp isr_common
 
+.global isr21
 isr21:
-    cli
-    push 0
-    push 21
+    push $0
+    push $21
     jmp isr_common
 
+.global isr22
 isr22:
-    cli
-    push 0
-    push 22
+    push $0
+    push $22
     jmp isr_common
 
+.global isr23
 isr23:
-    cli
-    push 0
-    push 23
+    push $0
+    push $23
     jmp isr_common
 
+.global isr24
 isr24:
-    cli
-    push 0
-    push 24
+    push $0
+    push $24
     jmp isr_common
 
+.global isr25
 isr25:
-    cli
-    push 0
-    push 25
+    push $0
+    push $25
     jmp isr_common
 
+.global isr26
 isr26:
-    cli
-    push 0
-    push 26
+    push $0
+    push $26
     jmp isr_common
 
+.global isr27
 isr27:
-    cli
-    push 0
-    push 27
+    push $0
+    push $27
     jmp isr_common
 
+.global isr28
 isr28:
-    cli
-    push 0
-    push 28
+    push $0
+    push $28
     jmp isr_common
 
+.global isr29
 isr29:
-    cli
-    push 0
-    push 29
+    push $0
+    push $29
     jmp isr_common
 
+.global isr30
 isr30:
-    cli
-    push 0
-    push 30
+    push $0
+    push $30
     jmp isr_common
 
+.global isr31
 isr31:
-    cli
-    push 0
-    push 31
+    push $0
+    push $31
     jmp isr_common
 
 isr_common:
     pusha
-    push %ds
-    push %es
-    push %fs
-    push %gs
+    pushw %ds
+    pushw %es
+    pushw %fs
+    pushw %gs
 
-    mov (DATA_SEG), %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %esp, %eax
-    push %eax
+    movw $KERNEL_DATA, %ax
+    movw %ax, %ds
+    movw %ax, %es
+    movw %ax, %fs
+    movw %ax, %gs
 
     call fault_handler
 
-    pop %eax
-    pop %gs
-    pop %fs
-    pop %es
-    pop %ds
+    popw %gs
+    popw %fs
+    popw %es
+    popw %ds
     popa
 
-    add $(8), %esp
-    sti
+    addl $8, %esp
     iret
 
 .global irq0
-.global irq1
-.global irq2
-.global irq3
-.global irq4
-.global irq5
-.global irq6
-.global irq7
-.global irq8
-.global irq9
-.global irq10
-.global irq11
-.global irq12
-.global irq13
-.global irq14
-.global irq15
-
 irq0:
-    cli
-    push 0
-    push 32
+    push $0
+    push $32
     jmp irq_common
 
+.global irq1
 irq1:
-    cli
-    push 0
-    push 33
+    push $0
+    push $33
     jmp irq_common
 
+.global irq2
 irq2:
-    cli
-    push 0
-    push 34
+    push $0
+    push $34
     jmp irq_common
 
+.global irq3
 irq3:
-    cli
-    push 0
-    push 35
+    push $0
+    push $35
     jmp irq_common
 
+.global irq4
 irq4:
-    cli
-    push 0
-    push 36
+    push $0
+    push $36
     jmp irq_common
 
+.global irq5
 irq5:
-    cli
-    push 0
-    push 37
+    push $0
+    push $37
     jmp irq_common
 
+.global irq6
 irq6:
-    cli
-    push 0
-    push 38
+    push $0
+    push $38
     jmp irq_common
 
+.global irq7
 irq7:
-    cli
-    push 0
-    push 39
+    push $0
+    push $39
     jmp irq_common
 
+.global irq8
 irq8:
-    cli
-    push 0
-    push 40
+    push $0
+    push $40
     jmp irq_common
 
+.global irq9
 irq9:
-    cli
-    push 0
-    push 41
+    push $0
+    push $41
     jmp irq_common
 
+.global irq10
 irq10:
-    cli
-    push 0
-    push 42
+    push $0
+    push $42
     jmp irq_common
 
+.global irq11
 irq11:
-    cli
-    push 0
-    push 43
+    push $0
+    push $43
     jmp irq_common
 
+.global irq12
 irq12:
-    cli
-    push 0
-    push 44
+    push $0
+    push $44
     jmp irq_common
 
+.global irq13
 irq13:
-    cli
-    push 0
-    push 45
+    push $0
+    push $45
     jmp irq_common
 
+.global irq14
 irq14:
-    cli
-    push 0
-    push 46
+    push $0
+    push $46
     jmp irq_common
 
+.global irq15
 irq15:
-    cli
-    push 0
-    push 47
+    push $0
+    push $47
     jmp irq_common
 
 irq_common:
-    pusha
-    push %ds
-    push %es
-    push %fs
-    push %gs
+    pushal
+    pushw %ds
+    pushw %es
+    pushw %fs
+    pushw %gs
 
-    mov (DATA_SEG), %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-    mov %esp, %eax
-    push %eax
+    movw $KERNEL_DATA, %ax
+    movw %ax, %ds
+    movw %ax, %es
+    movw %ax, %fs
+    movw %ax, %gs
 
+    movl $0x09770748,0xB8000
     call irq_handler
 
-    pop %eax
-    pop %gs
-    pop %fs
-    pop %es
-    pop %ds
-    popa
+    popw %gs
+    popw %fs
+    popw %es
+    popw %ds
+    popal
 
-    add $(8), %esp
-    sti
+    addl $8, %esp
     iret
