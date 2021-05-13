@@ -1,9 +1,9 @@
 ENTRY(_start)
 
-VIRTUAL_BASE_ADDR = 0xC0000000;
+VIRTUAL_BASE_ADDR = 3072M;
 
 SECTIONS {
-    . = VIRTUAL_BASE_ADDR + 0x100000;
+    . = VIRTUAL_BASE_ADDR + 1M;
 
     _kernel_start = .;
 
