@@ -43,11 +43,12 @@ void* memmove(void* dstptr, void const* srcptr, size_t size) {
 
 void* memset(void* bufptr, int value, size_t size) {
     auto* buf = reinterpret_cast<u8*>(bufptr);
+    value &= 0xFF;
 
     for (auto i = 0uz; i < size; i++)
         buf[i] = static_cast<u8>(value);
 
-    return bufptr;
+    return buf;
 }
 
 size_t strlen(char const* str) {
