@@ -1,6 +1,7 @@
 add_compile_options(-Os)
 
 set(KERNEL_SOURCES
+    Interrupts/GDT.cpp
     Interrupts/IDT.cpp
     Interrupts/ISR.cpp
     Interrupts/IRQ.cpp
