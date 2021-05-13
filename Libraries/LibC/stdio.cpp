@@ -116,7 +116,7 @@ int printf(char const* restrict format, ...) {
                 written++;
             }
 
-            while (d) {
+            do {
                 auto digit = d % 10;
 
                 if (!print(lookup[digit], 1))
@@ -125,7 +125,7 @@ int printf(char const* restrict format, ...) {
                 written++;
 
                 d /= 10;
-            }
+            } while (d);
 
             continue;
         }
