@@ -1,15 +1,10 @@
 #include <FSH/Types.h>
 
-#include <Kernel/Interrupts/IDT.h>
-#include <Kernel/Interrupts/ISR.h>
+#include <Kernel/Interrupts/Interrupts.h>
 
 #include <stdio.h>
 
 extern "C" {
-
-extern u32 CODE_SEG;
-extern u32 DATA_SEG;
-
 extern void isr0();
 extern void isr1();
 extern void isr2();
@@ -78,11 +73,11 @@ void isr_install() {
     idt_set_gate(31, reinterpret_cast<u32>(isr31), 0x8, 0x8E);
 }
 
-void fault_handler(regs* r) {
-    if (r->intno < 32) {
-        printf("Exception %d\n", r->intno);
+void fault_handler(regs r) {
+    if (r.intno < 32) {
+        printf("Exception %d\n", r.intno);
+
         while (true);
     }
 }
-
 }
