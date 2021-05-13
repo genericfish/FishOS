@@ -1,9 +1,8 @@
 #include <FSH/Types.h>
 
-#include <Kernel/Interrupts/IDT.h>
-#include <Kernel/Interrupts/IRQ.h>
-#include <Kernel/Interrupts/ISR.h>
+#include <Kernel/Interrupts/Interrupts.h>
 
+#include <stdio.h>
 #include <sys/io.h>
 
 extern "C" {
@@ -26,11 +25,11 @@ extern void irq15();
 
 void* irq_routines[16] = {};
 
-void irq_set(int irq, void* handler) {
+void irq_set(int irq, void (*handler)(regs)) {
     if (irq < 0 || irq >= 16)
         return;
 
-    irq_routines[irq] = handler;
+    irq_routines[irq] = reinterpret_cast<void*>(handler);
 }
 
 void irq_clear(int irq) {
@@ -74,13 +73,16 @@ void irq_install() {
     idt_set_gate(47, reinterpret_cast<u32>(irq15), 0x08, 0x8E);
 }
 
-void irq_handler(regs* r) {
-    void* handler = irq_routines[r->intno - 32];
+void irq_handler(u16 gs, u16 fs, u16 es, u16 ds, u32 edi, u32 esi, u32 ebp, u32 esp, u32 ebx,
+                 u32 edx, u32 ecx, u32 eax, u8 intno, u8 err) {
+    auto r = regs { gs, fs, es, ds, edi, esi, ebp, esp, ebx, edx, ecx, eax, intno, err };
+
+    auto handler = irq_routines[r.ecx - 32];
 
     if (handler)
-        reinterpret_cast<void(*)(void*)>(handler)(r);
+        reinterpret_cast<void (*)(regs)>(handler)(r);
 
-    if (r->intno >= 40)
+    if (r.intno >= 40)
         outb(0xA0, 0x20);
 
     outb(0x20, 0x20);
