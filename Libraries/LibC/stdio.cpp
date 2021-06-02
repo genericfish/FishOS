@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef __LIBK
@@ -26,7 +27,7 @@ int putchar(int ic) {
 static bool print(char const* data, size_t length) {
     auto const* bytes = reinterpret_cast<u8 const*>(data);
 
-    for (auto i = 0uz; i < length; i++)
+    for (auto i = 0UZ; i < length; i++)
         if (putchar(bytes[i]) == EOF)
             return false;
 
@@ -51,7 +52,7 @@ int printf(char const* restrict format, ...) {
             if (format[0] == '%')
                 format++;
 
-            auto amount = 1uz;
+            auto amount = 1UZ;
 
             while (format[amount] && format[amount] != '%')
                 amount++;
@@ -104,28 +105,16 @@ int printf(char const* restrict format, ...) {
         if (*format == 'd') {
             format++;
             auto d = va_arg(parameters, int);
-            const char* lookup[10] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 
             if (!maxrem)
                 return -1;
 
-            if (d < 0) {
-                if (!print("-", 1))
+            static char str[sizeof(int) * 8 + 1];
+            auto dstr = itoa(d, str, 10);
+
+            while (*dstr != '\0')
+                if (!print(dstr++, 1))
                     return -1;
-
-                written++;
-            }
-
-            do {
-                auto digit = d % 10;
-
-                if (!print(lookup[digit], 1))
-                    return -1;
-
-                written++;
-
-                d /= 10;
-            } while (d);
 
             continue;
         }

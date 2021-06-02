@@ -12,3 +12,22 @@ __attribute__((__noreturn__)) void abort(void) {
     };
     __builtin_unreachable();
 }
+
+char* itoa(int val, char* str, int base) {
+    static char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static constexpr int maxlen = sizeof(int) * 8 + 1;
+
+    auto* ret = &str[maxlen - 1];
+
+    *ret = '\0';
+
+    if (base <= 1 || base > 36)
+        return ret;
+
+    do {
+        *--ret = digits[val % base];
+        val /= base;
+    } while (val != 0);
+
+    return ret;
+}
