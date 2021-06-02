@@ -1,3 +1,5 @@
+#include <FSH/Types.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,19 +17,30 @@ __attribute__((__noreturn__)) void abort(void) {
 
 char* itoa(int val, char* str, int base) {
     static char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    static u32 num = 0;
     static constexpr int maxlen = sizeof(int) * 8 + 1;
 
     auto* ret = &str[maxlen - 1];
+    auto neg = val < 0 && base == 10;
+
+    num = static_cast<u32>(val);
 
     *ret = '\0';
 
-    if (base <= 1 || base > 36)
+    if (neg) {
+        num ^= -1;
+        num++;
+    } else if (base <= 1 || base > 36) {
         return ret;
+    }
 
     do {
-        *--ret = digits[val % base];
-        val /= base;
-    } while (val != 0);
+        *--ret = digits[num % base];
+        num /= base;
+    } while (num != 0);
+
+    if (neg)
+        *--ret = '-';
 
     return ret;
 }
