@@ -2,18 +2,15 @@
 #include <FSH/Types.h>
 
 #include <Kernel/Interrupts/Interrupts.h>
-#include <Kernel/Interrupts/IDT.h>
-#include <Kernel/Interrupts/IRQ.h>
-#include <Kernel/Interrupts/ISR.h>
 #include <Kernel/TTY/TTY.h>
 
 #include <stdio.h>
 #include <sys/io.h>
 
 extern "C" {
-extern void load_gdt();
 
-void main() {
+void main()
+{
     terminal_initialize();
 
     gdt_install();
@@ -21,7 +18,7 @@ void main() {
     isr_install();
     irq_install();
 
-    asm ("sti");
+    asm("sti");
 
     printf("      ===================          ====\n");
     printf("    ===                 ===       == ==\n");
@@ -32,6 +29,7 @@ void main() {
     printf("      ===================          ====\n");
     printf("            f i s h\n");
 
-    while(true);
+    while (true)
+        ;
 }
 }
