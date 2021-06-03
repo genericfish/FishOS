@@ -102,20 +102,30 @@ int printf(char const* restrict format, ...) {
             continue;
         }
 
-        if (*format == 'd') {
-            format++;
+        if (*format == 'd' || *format == 'x' || *format == 'b' || *format == 'o') {
             auto d = va_arg(parameters, int);
 
             if (!maxrem)
                 return -1;
 
             static char str[sizeof(int) * 8 + 1];
-            auto dstr = itoa(d, str, 10);
+
+            auto radix = 10;
+
+            if (*format == 'x')
+                radix = 16;
+            else if (*format == 'b')
+                radix = 2;
+            else if (*format == 'o')
+                radix = 8;
+
+            auto dstr = itoa(d, str, radix);
 
             while (*dstr != '\0')
                 if (!print(dstr++, 1))
                     return -1;
 
+            format++;
             continue;
         }
 
