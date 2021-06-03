@@ -4,6 +4,7 @@ IndentWidth: 4
 ColumnLimit: 100
 AccessModifierOffset: -4
 NamespaceIndentation: Inner
+IndentPPDirectives: AfterHash
 AlignOperands: Align
 AlignConsecutiveMacros: true
 AlignAfterOpenBracket: Align
@@ -12,16 +13,4 @@ AllowShortEnumsOnASingleLine: true
 BreakConstructorInitializers: BeforeComma
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterEnum: false
-  AfterStruct: false
-  AfterClass: false
-  SplitEmptyFunction: false
-  AfterControlStatement: MultiLine
-  AfterNamespace: false
-  AfterFunction: false
-  AfterUnion: false
-  AfterExternBlock: false
-  BeforeCatch: false
-  BeforeElse: false
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true
+  AfterFunction: True

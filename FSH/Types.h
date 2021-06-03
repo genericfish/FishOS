@@ -12,10 +12,10 @@
 #else
 /*
 This is invalid C++, user-defined literals must be prefixed with an underscore.
-Intellisense does not highlight this as an error, which is useful as the "uz"
+Intellisense does not highlight this as an error, which is useful as the "UZ"
 literal suffix is defined in GNU++23 for size_t.
 */
-constexpr size_t operator"" uz(uint64_t);
+constexpr size_t operator"" UZ(uint64_t);
 #endif
 
 #ifdef restrict
@@ -57,7 +57,6 @@ using ptrdiff_t = __PTRDIFF_TYPE__;
 
 #endif
 
-// FIXME: Figure out why ULL works and not uz.
 constexpr u64 KiB = 1ULL << 10;
 constexpr u64 MiB = 1ULL << 20;
 constexpr u64 GiB = 1ULL << 30;
