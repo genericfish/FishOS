@@ -5,10 +5,10 @@
 
 __BEGIN_DECLS
 
-int memcmp(void const*, void const*, size_t);
-void* memcpy(void* __restrict, void const* __restruct, size_t);
-void* memmove(void*, void const*, size_t);
-void* memset(void*, int, size_t);
-size_t strlen(char const*);
+int memcmp(void const* s1, void const* s2, size_t n);
+void* memcpy(void* __restrict__ dest, void const* __restrict src, size_t n);
+void* memmove(void* dest, void const* src, size_t n);
+void* memset(void* s, int c, size_t n);
+size_t strlen(char const* s);
 
 __END_DECLS

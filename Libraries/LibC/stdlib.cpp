@@ -15,15 +15,15 @@ __attribute__((__noreturn__)) void abort(void) {
     __builtin_unreachable();
 }
 
-char* itoa(int val, char* str, int base) {
+char* itoa(int value, char* str, int base) {
     static char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     static u32 num = 0;
     static constexpr int maxlen = sizeof(int) * 8 + 1;
 
     auto* ret = &str[maxlen - 1];
-    auto neg = val < 0 && base == 10;
+    auto neg = value < 0 && base == 10;
 
-    num = static_cast<u32>(val);
+    num = static_cast<u32>(value);
 
     *ret = '\0';
 

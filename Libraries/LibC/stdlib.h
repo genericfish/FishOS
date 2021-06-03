@@ -5,6 +5,6 @@
 __BEGIN_DECLS
 
 __attribute__((__noreturn__)) void abort(void);
-char* itoa(int, char*, int);
+char* itoa(int value, char* str, int base);
 
 __END_DECLS

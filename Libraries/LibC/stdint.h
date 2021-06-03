@@ -42,8 +42,8 @@ __END_DECLS
 #define INT32_MIN (-INT32_MAX - 1)
 
 #ifdef __INT32_MAX__
-#undef INT32_MAX
-#define INT32_MAX __INT32_MAX__
-#undef INT32_MIN
-#define INT32_MIN (-INT32_MAX - 1)
+#    undef INT32_MAX
+#    define INT32_MAX __INT32_MAX__
+#    undef INT32_MIN
+#    define INT32_MIN (-INT32_MAX - 1)
 #endif
