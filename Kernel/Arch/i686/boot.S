@@ -511,7 +511,6 @@ irq_common:
     movw %ax, %fs
     movw %ax, %gs
 
-    movl $0x09770748,0xB8000
     call irq_handler
 
     popw %gs
