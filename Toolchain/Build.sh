@@ -69,7 +69,7 @@ tar -xf Tarballs/${BINUTILS_NAME}.tar.xz -C Source
 tar -xf Tarballs/${GCC_NAME}.tar.xz -C Source
 
 export PREFIX="$DIR/Local"
-export ARCH=i686
+export ARCH=x86_64
 export TARGET=$ARCH-elf
 
 if [[ ":$PATH:" != *":$PREFIX/bin:"* ]]; then

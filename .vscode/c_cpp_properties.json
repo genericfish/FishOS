@@ -8,10 +8,10 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [],
-            "compilerPath": "${workspaceFolder}/Toolchain/Local/bin/i686-elf-g++",
+            "compilerPath": "${workspaceFolder}/Toolchain/Local/bin/x86_64-elf-g++",
             "cStandard": "gnu17",
             "cppStandard": "gnu++20",
-            "intelliSenseMode": "gcc-x86",
+            "intelliSenseMode": "gcc-x64",
             "compilerArgs": [
                 "-ffreestanding",
                 "-fno-rtti",
