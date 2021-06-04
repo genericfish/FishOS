@@ -1,8 +1,6 @@
 Standard: Cpp11
 BasedOnStyle: WebKit
 IndentWidth: 4
-ColumnLimit: 100
-AccessModifierOffset: -4
 NamespaceIndentation: Inner
 IndentPPDirectives: AfterHash
 AlignOperands: Align
