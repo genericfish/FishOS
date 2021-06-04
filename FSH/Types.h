@@ -6,8 +6,8 @@
 #error "[ERROR] Kernel: Compile using the cross-compiler."
 #endif
 
-#ifndef __i386__
-#error "[ERROR] Kernel: Compile using an ix86-elf cross-compiler."
+#ifndef __x86_64__
+#error "[ERROR] Kernel: Compile using x86_64-elf cross-compiler."
 #endif
 #else
 /*
@@ -21,7 +21,7 @@ constexpr size_t operator"" UZ(uint64_t);
 #ifdef restrict
 #undef restrict
 #endif
-#define restrict __restrict__
+#define restrict __restrict
 
 using u8 = __UINT8_TYPE__;
 using u16 = __UINT16_TYPE__;
