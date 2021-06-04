@@ -16,7 +16,7 @@ int puts(char const* str) { return printf("%s\n", str); }
 int putchar(int ic) {
 #ifdef __LIBK
     auto c = static_cast<char>(ic);
-    terminal_write(&c, sizeof(c));
+    TTY::write(&c, sizeof(c));
 #else
 // TODO: stdio and write syscall
 #endif
