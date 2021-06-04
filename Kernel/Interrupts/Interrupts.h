@@ -20,17 +20,19 @@ struct regs {
     u8 err;
 };
 
-struct PACKED IDT_entry {
+struct PACKED IDT_Entry {
     u16 base_lo;
     u16 sel;
-    u8 zero;
+    u8 ist;
     u8 flags;
-    u16 base_hi;
+    u16 base_med;
+    u32 base_hi;
+    u32 zero;
 };
 
 struct PACKED IDT_ptr {
     u16 limit;
-    u32 base;
+    u64 base;
 };
 
 extern "C" {
@@ -39,7 +41,7 @@ void irq_set(int, void (*)(regs));
 void isr_install();
 }
 
-IDT_entry const& idt_get_gate(size_t);
-void idt_set_gate(u8, u32, u16, u8);
+IDT_Entry const& idt_get_gate(size_t);
+void idt_set_gate(u8, u64, u16, u8);
 void idt_install();
 void gdt_install();

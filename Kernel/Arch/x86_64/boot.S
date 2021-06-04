@@ -137,3 +137,10 @@ _kernel:
     movabsq $_kernel_high, %rax
     jmp *%rax
 
+.global load_idt
+load_idt:
+    cli
+    cld
+    lidt (%rdi)
+
+    ret

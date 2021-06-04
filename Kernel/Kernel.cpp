@@ -2,7 +2,7 @@
 #include <FSH/Types.h>
 #include <FSH/Utility.h>
 
-// #include <Kernel/Interrupts/Interrupts.h>
+#include <Kernel/Interrupts/Interrupts.h>
 #include <Kernel/TTY/TTY.h>
 
 #include <stdio.h>
@@ -13,7 +13,7 @@ extern "C" int main()
     TTY::clear(VGA::vga_entry_color(VGA::WHITE, VGA::BLUE));
 
     // TODO/FIXME: Implement interrupts!
-    // idt_install();
+    idt_install();
     // isr_install();
     // irq_install();
 
