@@ -17,18 +17,13 @@ __attribute__((__noreturn__)) void abort(void)
     __builtin_unreachable();
 }
 
-char* _ntoa(int value, char* str, bool narrow, int maxlen, int base)
+char* _ntoa(long value, char* str, bool narrow, int maxlen, int base)
 {
     static char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static u64 num = 0;
 
     auto* ret = &str[maxlen - 1];
     auto neg = value < 0 && base == 10;
-
-    if (narrow)
-        num = static_cast<u32>(value);
-    else
-        num = static_cast<u64>(value);
+    auto num = static_cast<u64>(value);
 
     *ret = '\0';
 
@@ -38,6 +33,9 @@ char* _ntoa(int value, char* str, bool narrow, int maxlen, int base)
     } else if (base <= 1 || base > 36) {
         return ret;
     }
+
+    if (narrow)
+        num &= static_cast<u32>(-1);
 
     do {
         *--ret = digits[num % base];
