@@ -26,9 +26,16 @@ set(LIBC_SOURCES
 
 add_library(LibK ${LIBC_SOURCES})
 target_compile_options(LibK PUBLIC
+    -march=native
+    -fno-PIC
+    -pedantic
     -ffreestanding
     -fno-exceptions
     -fno-rtti
+    -fuse-cxa-atexit
+    -fno-threadsafe-statics
+    -mcmodel=kernel
+    -mno-red-zone
     -nostdlib
     -nostdinc
     -nostdinc++

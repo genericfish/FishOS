@@ -1,24 +1,28 @@
 add_compile_options(-Os)
 
 set(KERNEL_SOURCES
-    Interrupts/GDT.cpp
-    Interrupts/IDT.cpp
-    Interrupts/ISR.cpp
-    Interrupts/IRQ.cpp
+    TTY/TTY.cpp
     Kernel.cpp
     StdLib.cpp
-    TTY/TTY.cpp
 )
 set(KERNEL_ASM ${CMAKE_CURRENT_SOURCE_DIR}/Arch/${FISH_ARCH}/boot.S)
 set(KERNEL_LD ${CMAKE_CURRENT_SOURCE_DIR}/Arch/${FISH_ARCH}/linker.ld)
 
 set(KERNEL_CXX_FLAGS
+    -march=native
+    -fno-PIC
+    -pedantic
     -ffreestanding
     -fno-exceptions
     -fno-rtti
+    -fuse-cxa-atexit
+    -fno-threadsafe-statics
+    -mcmodel=kernel
+    -mno-red-zone
     -nostdlib
     -nostdinc
     -nostdinc++
+    -z max-page-size=0x1000
 )
 
 add_custom_command(
