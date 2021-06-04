@@ -102,13 +102,19 @@ int printf(char const* restrict format, ...) {
             continue;
         }
 
-        if (*format == 'd' || *format == 'x' || *format == 'b' || *format == 'o') {
-            auto d = va_arg(parameters, int);
+        static char str[sizeof(long) * 8 + 1];
+        auto long_mode = false;
+
+        if (format[0] == 'l' && format[1] == 'l') {
+            format += 2;
+            long_mode = true;
+        }
+
+        if (long_mode || *format == 'd' || *format == 'x' || *format == 'b' || *format == 'o') {
+            auto d = va_arg(parameters, long);
 
             if (!maxrem)
                 return -1;
-
-            static char str[sizeof(int) * 8 + 1];
 
             auto radix = 10;
 
@@ -119,7 +125,12 @@ int printf(char const* restrict format, ...) {
             else if (*format == 'o')
                 radix = 8;
 
-            auto dstr = itoa(d, str, radix);
+            char* dstr = (char*) 0;
+
+            if (long_mode)
+                dstr = ltoa(d, str, radix);
+            else
+                dstr = itoa(static_cast<i32>(d), str, radix);
 
             while (*dstr != '\0')
                 if (!print(dstr++, 1))
@@ -128,6 +139,9 @@ int printf(char const* restrict format, ...) {
             format++;
             continue;
         }
+
+        if (long_mode)
+            return -1;
 
         format = format_begun_at;
         auto len = strlen(format);

@@ -35,6 +35,7 @@ extern "C" int main()
     printf("Expect DEADBEEF: %x\n", 0xdeadbeef);
     printf("Expect 777: %o\n", 0777);
     printf("Expect 11: %b\n", 3);
+    printf("Address of idt_install(): %llx\n", reinterpret_cast<u64>(&idt_install));
 
     // TEST: Compile time loops using integer packs (remove this later).
     [&]<size_t... I>(index_sequence<I...>) {

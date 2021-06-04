@@ -1,9 +1,11 @@
+#include <FSH/Platform.h>
 #include <FSH/Types.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-__attribute__((__noreturn__)) void abort(void) {
+__attribute__((__noreturn__)) void abort(void)
+{
 #ifdef __LIBK
     printf("[Kernel] PANIC: abort()\n");
 #else
@@ -15,15 +17,15 @@ __attribute__((__noreturn__)) void abort(void) {
     __builtin_unreachable();
 }
 
-char* itoa(int value, char* str, int base) {
+char* _ntoa(int value, char* str, int maxlen, int base)
+{
     static char digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    static u32 num = 0;
-    static constexpr int maxlen = sizeof(int) * 8 + 1;
+    static u64 num = 0;
 
     auto* ret = &str[maxlen - 1];
     auto neg = value < 0 && base == 10;
 
-    num = static_cast<u32>(value);
+    num = static_cast<u64>(value);
 
     *ret = '\0';
 
@@ -43,4 +45,14 @@ char* itoa(int value, char* str, int base) {
         *--ret = '-';
 
     return ret;
+}
+
+FLATTEN char* itoa(int value, char* str, int base)
+{
+    return _ntoa(value, str, sizeof(int) * 8 + 1, base);
+}
+
+FLATTEN char* ltoa(long value, char* str, int base)
+{
+    return _ntoa(value, str, sizeof(long) * 8 + 1, base);
 }
