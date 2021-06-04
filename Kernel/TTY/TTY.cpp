@@ -1,72 +1,75 @@
 #include <FSH/Platform.h>
 #include <FSH/Types.h>
 
-#include <Kernel/Arch/i686/VGA.h>
+#include <Kernel/Arch/x86_64/VGA.h>
 #include <Kernel/StdLib.h>
 #include <Kernel/TTY/TTY.h>
 
-static size_t constexpr VGA_WIDTH = 80;
-static size_t constexpr VGA_HEIGHT = 25;
-static u16* const VGA_MEMORY = reinterpret_cast<u16*>(0xC03FF000);
+namespace TTY {
+static u16 constexpr VGA_WIDTH = 80;
+static u16 constexpr VGA_HEIGHT = 25;
+static u32 constexpr VGA_BUFFER_SIZE = VGA_HEIGHT * VGA_WIDTH;
+static u16* VGA_BUFFER = reinterpret_cast<u16*>(0xB8000ULL + 0xFFFFFFFF80000000ULL);
 
-size_t terminal_row;
-size_t terminal_column;
+static u16 g_pos[2] = { 0 };
+static u8 g_color = 0;
 
-u8 terminal_color;
-u16* terminal_buffer;
-
-void inline terminal_setcolor(u8 color) { terminal_color = color; }
-
-void terminal_initialize() {
-    terminal_row = 0;
-    terminal_column = 0;
-
-    terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-    terminal_buffer = VGA_MEMORY;
-
-    for (auto y = 0UZ; y < VGA_HEIGHT; y++) {
-        for (auto x = 0UZ; x < VGA_WIDTH; x++) {
-            auto const index = y * VGA_WIDTH + x;
-            terminal_buffer[index] = vga_entry(' ', terminal_color);
-        }
-    }
+void clear(VGA::Color bg, VGA::Color fg)
+{
+    clear(VGA::vga_entry_color(bg, fg));
 }
 
-void inline terminal_putentryat(char c, u8 color, size_t x, size_t y) {
+void clear(u8 color)
+{
+    for (auto i = 0UL; i < VGA_BUFFER_SIZE; i++)
+        VGA_BUFFER[i] = VGA::vga_entry(' ', color);
+
+    g_color = color;
+    g_pos[0] = g_pos[1] = 0;
+}
+
+inline void putentryat(char c, u8 color, size_t x, size_t y)
+{
     auto const index = y * VGA_WIDTH + x;
-    terminal_buffer[index] = vga_entry(c, color);
+    VGA_BUFFER[index] = VGA::vga_entry(c, color);
 }
 
-void terminal_scroll() {
-    for (auto i = 0UZ; i < VGA_HEIGHT; i++)
-        for (auto j = 0UZ; j < VGA_WIDTH; j++)
-            terminal_buffer[i * VGA_WIDTH + j] = terminal_buffer[(i + 1) * VGA_WIDTH + j];
+FLATTEN void scroll()
+{
+    for (auto i = 0UL; i < (VGA_BUFFER_SIZE - VGA_WIDTH); i++)
+        VGA_BUFFER[i] = VGA_BUFFER[i + VGA_WIDTH];
+
+    clear_line();
 }
 
-void terminal_clear_line() {
+void clear_line()
+{
     for (auto i = 0UZ; i < VGA_WIDTH - 1; i++)
-        terminal_putentryat(' ', terminal_color, i, VGA_HEIGHT - 1);
+        putentryat(' ', g_color, i, VGA_HEIGHT - 1);
 }
 
-void terminal_putchar(char c) {
+void putchar(char c)
+{
     if (c != '\n')
-        terminal_putentryat(static_cast<u8>(c), terminal_color, terminal_column, terminal_row);
+        putentryat(static_cast<u8>(c), g_color, g_pos[0], g_pos[1]);
 
-    if (c == '\n' || ++terminal_column == VGA_WIDTH) {
-        terminal_column = 0;
+    if (c == '\n' || ++g_pos[0] == VGA_WIDTH) {
+        g_pos[0] = 0;
 
-        if (++terminal_row == VGA_HEIGHT) {
-            terminal_scroll();
-            terminal_clear_line();
+        if (++g_pos[1] == VGA_HEIGHT) {
+            scroll();
 
-            terminal_row = VGA_HEIGHT - 1;
+            g_pos[1] = VGA_HEIGHT - 1;
         }
     }
 }
 
-void terminal_write(char const* data, size_t size) {
-    for (auto i = 0UZ; i < size; i++)
-        terminal_putchar(data[i]);
+FLATTEN void write(char const* data, size_t n)
+{
+    for (auto i = 0UZ; i < n; i++)
+        putchar(data[i]);
 }
 
-FLATTEN void terminal_writestring(char const* data) { terminal_write(data, strlen(data)); }
+FLATTEN void writestring(char const* str) { write(str, strlen(str)); }
+
+}
