@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <sys/io.h>
 
+void* irq_routines[16] = {};
+
 extern "C" {
 extern void irq0();
 extern void irq1();
@@ -23,23 +25,43 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
-void* irq_routines[16] = {};
+void irq_handler(reg_t r)
+{
+    auto const index = r.intn - 32;
 
-void irq_set(int irq, void (*handler)(regs)) {
+    if (index >= 16)
+        return;
+
+    auto handler = irq_routines[index];
+
+    if (handler)
+        reinterpret_cast<void (*)(reg_t)>(handler)(r);
+
+    if (r.intn >= 40)
+        outb(0xA0, 0x20);
+
+    outb(0x20, 0x20);
+}
+}
+
+void irq_set(int irq, void (*handler)(reg_t))
+{
     if (irq < 0 || irq >= 16)
         return;
 
     irq_routines[irq] = reinterpret_cast<void*>(handler);
 }
 
-void irq_clear(int irq) {
+void irq_clear(int irq)
+{
     if (irq < 0 || irq >= 16)
         return;
 
     irq_routines[irq] = 0;
 }
 
-void irq_remap() {
+void irq_remap()
+{
     outb(0x20, 0x11);
     outb(0xA0, 0x11);
     outb(0x21, 0x20);
@@ -52,39 +74,24 @@ void irq_remap() {
     outb(0xA1, 0x0);
 }
 
-void irq_install() {
+void irq_install()
+{
     irq_remap();
 
-    idt_set_gate(32, reinterpret_cast<u32>(irq0), 0x08, 0x8E);
-    idt_set_gate(33, reinterpret_cast<u32>(irq1), 0x08, 0x8E);
-    idt_set_gate(34, reinterpret_cast<u32>(irq2), 0x08, 0x8E);
-    idt_set_gate(35, reinterpret_cast<u32>(irq3), 0x08, 0x8E);
-    idt_set_gate(36, reinterpret_cast<u32>(irq4), 0x08, 0x8E);
-    idt_set_gate(37, reinterpret_cast<u32>(irq5), 0x08, 0x8E);
-    idt_set_gate(38, reinterpret_cast<u32>(irq6), 0x08, 0x8E);
-    idt_set_gate(39, reinterpret_cast<u32>(irq7), 0x08, 0x8E);
-    idt_set_gate(40, reinterpret_cast<u32>(irq8), 0x08, 0x8E);
-    idt_set_gate(41, reinterpret_cast<u32>(irq9), 0x08, 0x8E);
-    idt_set_gate(42, reinterpret_cast<u32>(irq10), 0x08, 0x8E);
-    idt_set_gate(43, reinterpret_cast<u32>(irq11), 0x08, 0x8E);
-    idt_set_gate(44, reinterpret_cast<u32>(irq12), 0x08, 0x8E);
-    idt_set_gate(45, reinterpret_cast<u32>(irq13), 0x08, 0x8E);
-    idt_set_gate(46, reinterpret_cast<u32>(irq14), 0x08, 0x8E);
-    idt_set_gate(47, reinterpret_cast<u32>(irq15), 0x08, 0x8E);
-}
-
-void irq_handler(u16 gs, u16 fs, u16 es, u16 ds, u32 edi, u32 esi, u32 ebp, u32 esp, u32 ebx,
-                 u32 edx, u32 ecx, u32 eax, u8 intno, u8 err) {
-    auto r = regs { gs, fs, es, ds, edi, esi, ebp, esp, ebx, edx, ecx, eax, intno, err };
-
-    auto handler = irq_routines[r.ecx - 32];
-
-    if (handler)
-        reinterpret_cast<void (*)(regs)>(handler)(r);
-
-    if (r.intno >= 40)
-        outb(0xA0, 0x20);
-
-    outb(0x20, 0x20);
-}
+    idt_set_gate(32, reinterpret_cast<u64>(irq0), 0x08, 0x8E);
+    idt_set_gate(33, reinterpret_cast<u64>(irq1), 0x08, 0x8E);
+    idt_set_gate(34, reinterpret_cast<u64>(irq2), 0x08, 0x8E);
+    idt_set_gate(35, reinterpret_cast<u64>(irq3), 0x08, 0x8E);
+    idt_set_gate(36, reinterpret_cast<u64>(irq4), 0x08, 0x8E);
+    idt_set_gate(37, reinterpret_cast<u64>(irq5), 0x08, 0x8E);
+    idt_set_gate(38, reinterpret_cast<u64>(irq6), 0x08, 0x8E);
+    idt_set_gate(39, reinterpret_cast<u64>(irq7), 0x08, 0x8E);
+    idt_set_gate(40, reinterpret_cast<u64>(irq8), 0x08, 0x8E);
+    idt_set_gate(41, reinterpret_cast<u64>(irq9), 0x08, 0x8E);
+    idt_set_gate(42, reinterpret_cast<u64>(irq10), 0x08, 0x8E);
+    idt_set_gate(43, reinterpret_cast<u64>(irq11), 0x08, 0x8E);
+    idt_set_gate(44, reinterpret_cast<u64>(irq12), 0x08, 0x8E);
+    idt_set_gate(45, reinterpret_cast<u64>(irq13), 0x08, 0x8E);
+    idt_set_gate(46, reinterpret_cast<u64>(irq14), 0x08, 0x8E);
+    idt_set_gate(47, reinterpret_cast<u64>(irq15), 0x08, 0x8E);
 }

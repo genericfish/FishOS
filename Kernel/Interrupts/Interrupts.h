@@ -3,21 +3,16 @@
 #include <FSH/Platform.h>
 #include <FSH/Types.h>
 
-struct regs {
-    u16 gs;
-    u16 fs;
-    u16 es;
-    u16 ds;
-    u32 edi;
-    u32 esi;
-    u32 ebp;
-    u32 esp;
-    u32 ebx;
-    u32 edx;
-    u32 ecx;
-    u32 eax;
-    u8 intno;
-    u8 err;
+struct PACKED reg_t {
+    u64 cr0, cr2, cr3, cr4;
+
+    u64 r11, r10, r9, r8;
+    u64 rbp, rsi, rdi;
+    u64 rdx, rcx, rbx, rax;
+
+    u64 intn, err;
+
+    u64 rip, cs, flags, rsp, ss;
 };
 
 struct PACKED IDT_Entry {
@@ -25,23 +20,23 @@ struct PACKED IDT_Entry {
     u16 sel;
     u8 ist;
     u8 flags;
-    u16 base_med;
+    u16 base_mid;
     u32 base_hi;
     u32 zero;
 };
 
-struct PACKED IDT_ptr {
+struct PACKED IDT_Descriptor {
     u16 limit;
-    u64 base;
+    IDT_Entry* base;
 };
 
-extern "C" {
-void irq_install();
-void irq_set(int, void (*)(regs));
+void idt_install();
 void isr_install();
-}
+void irq_install();
+
+void irq_remap();
+void irq_clear(int);
+void irq_set(int, void (*)(reg_t));
 
 IDT_Entry const& idt_get_gate(size_t);
 void idt_set_gate(u8, u64, u16, u8);
-void idt_install();
-void gdt_install();

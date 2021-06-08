@@ -14,12 +14,12 @@ extern "C" int main()
 
     // TODO/FIXME: Implement interrupts!
     idt_install();
-    // isr_install();
-    // irq_install();
+    isr_install();
+    irq_install();
 
     // irq_set(0, timer);
 
-    // asm("sti");
+    asm("sti");
 
     printf("      ===================          ====\n");
     printf("    ===                 ===       == ==\n");
