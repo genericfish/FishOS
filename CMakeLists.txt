@@ -32,4 +32,3 @@ add_custom_target(debug
 )
 
 add_dependencies(run Kernel)
-add_dependencies(run debug)
