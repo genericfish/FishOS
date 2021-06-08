@@ -89,8 +89,7 @@ irq\m\():
     pushall
     pushcr
 
-    // movq %rdi, %rsp
-    // call \name\()_handler
+    call \name\()_handler
 
     popcr
     popall
