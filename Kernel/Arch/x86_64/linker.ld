@@ -2,10 +2,10 @@ OUTPUT_FORMAT(elf64-x86-64)
 OUTPUT_ARCH(i386:x86-64)
 ENTRY(_bootstrap)
 
-VIRTUAL_BASE_ADDR = 0xFFFFFFFF80000000 + 2M;
+VIRTUAL_BASE_ADDR = 0xFFFFFFFF80000000;
 
 SECTIONS {
-    . = VIRTUAL_BASE_ADDR;
+    . = VIRTUAL_BASE_ADDR + 2M;
 
     _kernel_start = .;
 
@@ -57,6 +57,7 @@ SECTIONS {
         _bss = .;
         *(COMMON)
         *(.bss*)
+        *(.stack)
     }
 
     _kernel_end = .;
