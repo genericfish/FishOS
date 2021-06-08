@@ -2,7 +2,8 @@
 
 #include <string.h>
 
-int memcmp(void const* s1, void const* s2, size_t n) {
+int memcmp(void const* s1, void const* s2, size_t n)
+{
     auto const* a = reinterpret_cast<u8 const*>(s1);
     auto const* b = reinterpret_cast<u8 const*>(s2);
 
@@ -16,7 +17,8 @@ int memcmp(void const* s1, void const* s2, size_t n) {
     return 0;
 }
 
-void* memcpy(void* __restrict dest, void const* __restrict src, size_t n) {
+void* memcpy(void* __restrict dest, void const* __restrict src, size_t n)
+{
     auto* d = reinterpret_cast<u8*>(dest);
     auto const* s = reinterpret_cast<u8 const*>(src);
 
@@ -26,7 +28,8 @@ void* memcpy(void* __restrict dest, void const* __restrict src, size_t n) {
     return dest;
 }
 
-void* memmove(void* dest, void const* src, size_t n) {
+void* memmove(void* dest, void const* src, size_t n)
+{
     auto* d = reinterpret_cast<u8*>(dest);
     auto const* s = reinterpret_cast<u8 const*>(src);
 
@@ -44,7 +47,8 @@ void* memmove(void* dest, void const* src, size_t n) {
     return dest;
 }
 
-void* memset(void* s, int c, size_t n) {
+void* memset(void* s, int c, size_t n)
+{
     auto* buf = reinterpret_cast<u8*>(s);
     c &= 0xFF;
 
@@ -54,7 +58,8 @@ void* memset(void* s, int c, size_t n) {
     return buf;
 }
 
-size_t strlen(char const* s) {
+size_t strlen(char const* s)
+{
     auto len = 0UZ;
 
     while (s[len])

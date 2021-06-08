@@ -8,12 +8,13 @@
 #include <string.h>
 
 #ifdef __LIBK
-#include <Kernel/TTY/TTY.h>
+#    include <Kernel/TTY/TTY.h>
 #endif
 
 int puts(char const* str) { return printf("%s\n", str); }
 
-int putchar(int ic) {
+int putchar(int ic)
+{
 #ifdef __LIBK
     auto c = static_cast<char>(ic);
     TTY::write(&c, sizeof(c));
@@ -24,7 +25,8 @@ int putchar(int ic) {
     return ic;
 }
 
-static bool print(char const* data, size_t length) {
+static bool print(char const* data, size_t length)
+{
     auto const* bytes = reinterpret_cast<u8 const*>(data);
 
     for (auto i = 0UZ; i < length; i++)
@@ -34,7 +36,8 @@ static bool print(char const* data, size_t length) {
     return true;
 }
 
-int printf(char const* restrict format, ...) {
+int printf(char const* restrict format, ...)
+{
     va_list parameters;
     va_start(parameters, format);
 
@@ -125,7 +128,7 @@ int printf(char const* restrict format, ...) {
             else if (*format == 'o')
                 radix = 8;
 
-            char* dstr = (char*) 0;
+            char* dstr = reinterpret_cast<char*>(0);
 
             if (long_mode)
                 dstr = ltoa(d, str, radix);

@@ -40,7 +40,7 @@ extern void isr31();
 
 void isr_handler(reg_t r)
 {
-    printf("Exception %d\n", r.intn);
+    printf("Exception 0x%x\n", r.intn);
 
     asm volatile("cli");
     while (true)

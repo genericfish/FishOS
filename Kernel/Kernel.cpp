@@ -38,9 +38,15 @@ extern "C" int main()
     printf("Address of idt_install(): %llx\n", reinterpret_cast<u64>(&idt_install));
 
     // TEST: Compile time loops using integer packs (remove this later).
-    [&]<size_t... I>(index_sequence<I...>) {
+    [&]<size_t... I>(index_sequence<I...>)
+    {
         (printf("%d\n", I), ...);
-    }(make_index_sequence<5>{});
+    }
+    (make_index_sequence<5> {});
+
+    printf("test\n", 1 / 0);
+
+    printf("hi");
 
     while (true)
         ;
