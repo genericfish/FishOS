@@ -26,8 +26,11 @@ add_subdirectory(Libraries)
 
 add_custom_target(grub-image
     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/Boot/iso/boot/grub
+    COMMAND mkdir -p ${CMAKE_BINARY_DIR}/Root/boot
+
     COMMAND cp ${CMAKE_BINARY_DIR}/Boot/fish.kernel ${CMAKE_BINARY_DIR}/Boot/iso/boot
     COMMAND cp ${CMAKE_SOURCE_DIR}/Misc/grub.cfg ${CMAKE_BINARY_DIR}/Boot/iso/boot/grub
+
     COMMAND grub-mkrescue -o ${CMAKE_BINARY_DIR}/Root/boot/fish.iso ${CMAKE_BINARY_DIR}/Boot/iso
 )
 
