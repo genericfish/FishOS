@@ -3,7 +3,8 @@
 #include <FSH/Platform.h>
 #include <FSH/Types.h>
 
-struct PACKED reg_t {
+namespace Interrupts {
+struct PACKED Registers {
     u64 cr0, cr2, cr3, cr4;
 
     u64 r11, r10, r9, r8;
@@ -25,18 +26,20 @@ struct PACKED IDT_Entry {
     u32 zero;
 };
 
-struct PACKED IDT_Descriptor {
+struct PACKED Descriptor {
     u16 limit;
-    IDT_Entry* base;
+    u64 base;
 };
 
-void idt_install();
-void isr_install();
-void irq_install();
+void setup();
 
-void irq_remap();
 void irq_clear(int);
-void irq_set(int, void (*)(reg_t));
+void irq_set(int, void (*)(Registers));
 
-IDT_Entry const& idt_get_gate(size_t);
-void idt_set_gate(u8, u64, u16, u8);
+namespace IDT {
+    IDT_Entry const& idt_get_gate(size_t);
+    void idt_set_gate(u8, u64, u16, u8);
+    void setup();
+}
+
+}

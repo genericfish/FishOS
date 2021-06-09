@@ -56,7 +56,6 @@
 .endm
 
 .macro isr n
-.global isr\n
 isr\n\():
     cli
     pushq $0
@@ -66,10 +65,11 @@ isr\n\():
 .endm
 
 .macro isrc n
-.global isr\n
 isr\n\():
     cli
     pushq $(\n)
+    nop
+    nop
 
     jmp isr_common
 .endm
@@ -100,10 +100,11 @@ irq\m\():
 .endm
 
 # Multiboot consts
-.set MULTIBOOT_ALIGN,       1<<0
-.set MULTIBOOT_MEMINFO,     1<<1
-.set MULTIBOOT_VIDEO_MODE,  1<<2
-.set MULTIBOOT_FLAGS,       0x00010003
+.set MULTIBOOT_PAGE_ALIGN,  1 << 0
+.set MULTIBOOT_MEMORY_INFO, 1 << 1
+.set MULTIBOOT_TEXT_MODE,   1 << 16
+.set MULTIBOOT_VIDEO_MODE,  1 << 2
+.set MULTIBOOT_FLAGS,       MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_TEXT_MODE
 .set MULTIBOOT_MAGIC,       0x1BADB002
 .set MULTIBOOT_CHECKSUM,    -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
 
@@ -118,11 +119,18 @@ multiboot_header:
 .long MULTIBOOT_FLAGS
 .long MULTIBOOT_CHECKSUM
 
+multiboot_memory:
 .long (multiboot_header - VIRTUAL_BASE_ADDR)
 .long (_kernel_start - VIRTUAL_BASE_ADDR)
 .long (_data_end - VIRTUAL_BASE_ADDR)
 .long (_kernel_end - VIRTUAL_BASE_ADDR)
 .long (_bootstrap - VIRTUAL_BASE_ADDR)
+
+multiboot_video:
+.long 0x00000000 # mode
+.long       1280 # width
+.long       1024 # height
+.long         32 # depth
 
 .section .text
 .global _bootstrap, init_pml4, init_pdp, init_pd
@@ -189,13 +197,6 @@ _kernel_high:
     movq $0x0, init_pml4
     invlpg 0
 
-    call main
-
-_kernel_hang:
-    hlt
-    jmp _kernel_hang
-
-_kernel:
     lgdt (gdt_ptr64)
 
     mov $kdata, %ax
@@ -205,21 +206,21 @@ _kernel:
     mov %ax, %gs
     mov %ax, %ss
 
+    call main
+
+_kernel_hang:
+    hlt
+    jmp _kernel_hang
+
+_kernel:
     movabsq $_kernel_high, %rax
     jmp *%rax
-
-.global load_idt
-load_idt:
-    cli
-    cld
-
-    lidt (%rdi)
-
-    ret
 
 idt_common isr
 idt_common irq
 
+.global idt_handlers
+idt_handlers:
 isr 0
 isr 1
 isr 2
@@ -310,6 +311,7 @@ init_pd:
     .fill 510, 8, 0
 
 .section .stack, "aw", @nobits
+.align 16
 stack_bottom:
-    .skip 16 * KiB
+    .skip 32 * KiB
 stack_top:

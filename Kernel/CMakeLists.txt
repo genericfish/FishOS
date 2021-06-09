@@ -2,8 +2,7 @@ add_compile_options(-Os)
 
 set(KERNEL_SOURCES
     Interrupts/IDT.cpp
-    Interrupts/ISR.cpp
-    Interrupts/IRQ.cpp
+    Interrupts/Interrupts.cpp
     TTY/TTY.cpp
     Kernel.cpp
     StdLib.cpp
