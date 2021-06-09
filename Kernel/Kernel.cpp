@@ -8,16 +8,23 @@
 #include <stdio.h>
 #include <sys/io.h>
 
+static u64 ticks = 0;
+
+void timer(reg_t)
+{
+    if (ticks++ % 18 == 0)
+        printf("%lld seconds.\n", ticks / 18);
+}
+
 extern "C" int main()
 {
     TTY::clear(VGA::vga_entry_color(VGA::WHITE, VGA::BLUE));
 
-    // TODO/FIXME: Implement interrupts!
     idt_install();
     isr_install();
     irq_install();
 
-    // irq_set(0, timer);
+    irq_set(0, timer);
 
     asm("sti");
 
@@ -44,12 +51,15 @@ extern "C" int main()
     }
     (make_index_sequence<5> {});
 
-    printf("test\n", 1 / 0);
+    // TEST: Div by 0
+    // for (auto i = 0; i < 5; i++)
+    //     printf("%d\n", 120 / i);
 
-    printf("hi");
+    // TEST: Pagefaults
+    // *reinterpret_cast<u32*>(0x1BADBABE) = 0xDEADBEEF;
 
     while (true)
-        ;
+        continue;
 
     return 0;
 }
