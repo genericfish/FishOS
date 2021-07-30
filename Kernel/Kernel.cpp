@@ -5,10 +5,16 @@
 #include <Kernel/Interrupts/Interrupts.h>
 #include <Kernel/TTY/TTY.h>
 
+#include <Kernel/Memory/Paging.h>
+#include <Kernel/Memory/Address.h>
+
 #include <stdio.h>
 #include <sys/io.h>
 
-static u64 ticks = 0;
+using namespace Address;
+using namespace Memory;
+
+u64 ticks = 0;
 
 void timer(Interrupts::Registers)
 {
@@ -34,27 +40,6 @@ extern "C" int main()
     printf("    ===                 ===       == ==\n");
     printf("      ===================          ====\n");
     printf("            f i s h\n");
-
-    // TEST: printf formatting
-    printf("Expect -16: %d\nExpect 29: %d\n", -16, 29);
-    printf("Expect DEADBEEF: %x\n", 0xdeadbeef);
-    printf("Expect 777: %o\n", 0777);
-    printf("Expect 11: %b\n", 3);
-    printf("Address of Interrupts::setup(): %llx\n", reinterpret_cast<u64>(&Interrupts::setup));
-
-    // TEST: Compile time loops using integer packs (remove this later).
-    [&]<size_t... I>(index_sequence<I...>)
-    {
-        (printf("%d\n", I), ...);
-    }
-    (make_index_sequence<5> {});
-
-    // TEST: Div by 0
-    // for (auto i = 0; i < 5; i++)
-    //     printf("%d\n", 120 / i);
-
-    // TEST: Pagefaults
-    // *reinterpret_cast<u32*>(0x1BADBABE) = 0xDEADBEEF;
 
     while (true)
         continue;
