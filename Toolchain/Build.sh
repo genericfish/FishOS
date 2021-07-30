@@ -6,7 +6,7 @@ DIR=$(pwd)
 NTHREADS=$(($(nproc --all) + 1))
 
 # GCC/Binutils Information
-BINUTILS_VERSION=2.36.1
+BINUTILS_VERSION=2.37
 GCC_VERSION=11.1.0
 
 BINUTILS_NAME="binutils-$BINUTILS_VERSION"
@@ -16,7 +16,7 @@ BINUTILS_TAR=${BINUTILS_NAME}.tar.xz
 GCC_TAR=${GCC_NAME}.tar.xz
 
 # GCC/Binutils Source URLs
-BINUTILS_URL="http://ftp.gnu.org/gnu/binutils"
+BINUTILS_URL="https://ftp.gnu.org/gnu/binutils"
 GCC_URL="https://ftp.gnu.org/gnu/gcc/"
 
 BINUTILS_SOURCE_URL="${BINUTILS_URL}/${BINUTILS_TAR}"
