@@ -6,8 +6,6 @@ IndentPPDirectives: AfterHash
 AlignOperands: Align
 AlignConsecutiveMacros: true
 AlignAfterOpenBracket: Align
-AllowShortFunctionsOnASingleLine: All
-AllowShortEnumsOnASingleLine: true
 BreakConstructorInitializers: BeforeComma
 BreakBeforeBraces: Custom
 BraceWrapping:
