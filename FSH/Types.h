@@ -15,7 +15,7 @@ This is invalid C++, user-defined literals must be prefixed with an underscore.
 Intellisense does not highlight this as an error, which is useful as the "UZ"
 literal suffix is defined in GNU++23 for size_t.
 */
-constexpr size_t operator"" UZ(uint64_t);
+constexpr char operator"" UZ(unsigned long long);
 #endif
 
 #ifdef restrict
@@ -28,10 +28,10 @@ using u16 = __UINT16_TYPE__;
 using u32 = __UINT32_TYPE__;
 using u64 = __UINT64_TYPE__;
 
-using i8 = __UINT8_TYPE__;
-using i16 = __UINT16_TYPE__;
-using i32 = __UINT32_TYPE__;
-using i64 = __UINT64_TYPE__;
+using i8 = __INT8_TYPE__;
+using i16 = __INT16_TYPE__;
+using i32 = __INT32_TYPE__;
+using i64 = __INT64_TYPE__;
 
 #ifdef __LIBK
 using size_t = __SIZE_TYPE__;
