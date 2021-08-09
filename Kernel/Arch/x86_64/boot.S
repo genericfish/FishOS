@@ -102,8 +102,8 @@ irq\m\():
 # Multiboot consts
 .set MULTIBOOT_PAGE_ALIGN,  1 << 0
 .set MULTIBOOT_MEMORY_INFO, 1 << 1
-.set MULTIBOOT_TEXT_MODE,   1 << 16
 .set MULTIBOOT_VIDEO_MODE,  1 << 2
+.set MULTIBOOT_TEXT_MODE,   1 << 16
 .set MULTIBOOT_FLAGS,       MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_TEXT_MODE
 .set MULTIBOOT_MAGIC,       0x1BADB002
 .set MULTIBOOT_CHECKSUM,    -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
@@ -148,14 +148,11 @@ _bootstrap:
     pushl %ebx
 
     xorl %eax, %eax
-    movl $(_bss - VIRTUAL_BASE_ADDR), %edi
+    movl $(_bss - VIRTUAL_BASE_ADDR), %ebp
     movl $(_kernel_end - VIRTUAL_BASE_ADDR), %ecx
-    subl %edi, %ecx
+    subl %ebp, %ecx
     cld
     rep stosb
-
-    popl %esi
-    popl %edi
 
     # Disable Paging
     movl %cr0, %eax
@@ -183,6 +180,9 @@ _bootstrap:
     movl %cr0, %eax
     orl $0x80000000, %eax
     movl %eax, %cr0
+
+    popl %esi
+    popl %edi
 
     # 64 bits!
     ljmp $kcode, $(_kernel - VIRTUAL_BASE_ADDR)
