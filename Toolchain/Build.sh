@@ -7,7 +7,7 @@ NTHREADS=$(($(nproc --all) + 1))
 
 # GCC/Binutils Information
 BINUTILS_VERSION=2.37
-GCC_VERSION=11.1.0
+GCC_VERSION=11.2.0
 
 BINUTILS_NAME="binutils-$BINUTILS_VERSION"
 GCC_NAME="gcc-$GCC_VERSION"
