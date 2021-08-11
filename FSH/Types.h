@@ -33,6 +33,9 @@ using i16 = __INT16_TYPE__;
 using i32 = __INT32_TYPE__;
 using i64 = __INT64_TYPE__;
 
+using intptr_t = __INTPTR_TYPE__;
+using uintptr_t = __UINTPTR_TYPE__;
+
 #ifdef __LIBK
 using size_t = __SIZE_TYPE__;
 
@@ -45,6 +48,8 @@ using int8_t = i8;
 using int16_t = i16;
 using int32_t = i32;
 using int64_t = i64;
+
+using ptrdiff_t = __PTRDIFF_TYPE__;
 #else
 
 #include <stddef.h>
