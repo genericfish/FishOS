@@ -99,38 +99,29 @@ irq\m\():
     iretq
 .endm
 
-# Multiboot consts
-.set MULTIBOOT_PAGE_ALIGN,  1 << 0
-.set MULTIBOOT_MEMORY_INFO, 1 << 1
-.set MULTIBOOT_VIDEO_MODE,  1 << 2
-.set MULTIBOOT_TEXT_MODE,   1 << 16
-.set MULTIBOOT_FLAGS,       MULTIBOOT_PAGE_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_TEXT_MODE
-.set MULTIBOOT_MAGIC,       0x1BADB002
-.set MULTIBOOT_CHECKSUM,    -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
+# Multiboot2 consts
+.set MULTIBOOT_MAGIC,         0xE85250D6
+.set MULTIBOOT_ARCHITECTURE,  0
+.set MULTIBOOT_HEADER_LENGTH, multiboot_header - multiboot_header_end
+.set MULTIBOOT_CHECKSUM,      -(MULTIBOOT_MAGIC + MULTIBOOT_ARCHITECTURE + MULTIBOOT_HEADER_LENGTH)
 
 .code32
 
 # Begin Multiboot
 .section .multiboot
-.align 4
+.align 8
 
 multiboot_header:
 .long MULTIBOOT_MAGIC
-.long MULTIBOOT_FLAGS
+.long MULTIBOOT_ARCHITECTURE
+.long MULTIBOOT_HEADER_LENGTH
 .long MULTIBOOT_CHECKSUM
 
-multiboot_memory:
-.long (multiboot_header - VIRTUAL_BASE_ADDR)
-.long (_kernel_start - VIRTUAL_BASE_ADDR)
-.long (_data_end - VIRTUAL_BASE_ADDR)
-.long (_kernel_end - VIRTUAL_BASE_ADDR)
-.long (_bootstrap - VIRTUAL_BASE_ADDR)
+.word 0
+.word 0
+.long 8
 
-multiboot_video:
-.long 0x00000000 # mode
-.long       1280 # width
-.long       1024 # height
-.long         32 # depth
+multiboot_header_end:
 
 .section .text
 .global _bootstrap, init_pml4, init_pdp, init_pd
