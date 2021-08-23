@@ -23,7 +23,6 @@ add_subdirectory(FSH)
 add_subdirectory(Kernel)
 add_subdirectory(Libraries)
 
-
 add_custom_target(grub-image
     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/Boot/iso/boot/grub
     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/Root/boot
@@ -34,13 +33,14 @@ add_custom_target(grub-image
     COMMAND grub-mkrescue -o ${CMAKE_BINARY_DIR}/Root/boot/fish.iso ${CMAKE_BINARY_DIR}/Boot/iso
 )
 
-
 add_custom_target(run
-    COMMAND qemu-system-x86_64 ${CMAKE_BINARY_DIR}/Root/boot/fish.iso
+    COMMAND qemu-system-x86_64 ${CMAKE_BINARY_DIR}/Root/boot/fish.iso -serial stdio
+    USES_TERMINAL
 )
 
 add_custom_target(debug
-    COMMAND qemu-system-x86_64 ${CMAKE_BINARY_DIR}/Root/boot/fish.iso -d int,cpu_reset -D log.txt -no-reboot
+    COMMAND qemu-system-x86_64 ${CMAKE_BINARY_DIR}/Root/boot/fish.iso -d int,cpu_reset -serial stdio -D log.txt -no-reboot
+    USES_TERMINAL
 )
 
 add_dependencies(grub-image Kernel)
