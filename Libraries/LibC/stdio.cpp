@@ -8,7 +8,8 @@
 #include <string.h>
 
 #ifdef __LIBK
-#    include <Kernel/TTY/TTY.h>
+#    include <Kernel/Drivers/TTY/TTY.h>
+using namespace Kernel::Drivers;
 #endif
 
 int puts(char const* str) { return printf("%s\n", str); }

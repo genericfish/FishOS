@@ -2,9 +2,9 @@
 #include <FSH/Types.h>
 #include <FSH/Utility.h>
 
+#include <Kernel/Drivers/TTY/TTY.h>
+#include <Kernel/Drivers/Serial/Serial.h>
 #include <Kernel/Interrupts/Interrupts.h>
-#include <Kernel/TTY/TTY.h>
-
 #include <Kernel/Memory/Address.h>
 
 #include <Kernel/multiboot2.h>
@@ -12,7 +12,8 @@
 #include <stdio.h>
 #include <sys/io.h>
 
-using namespace Address;
+using namespace Kernel::Address;
+using namespace Kernel::Drivers;
 
 extern "C" u64 init_pml4;
 extern "C" u64 _kernel_start;
@@ -64,7 +65,7 @@ extern "C" int main(u64 multiboot_magic, u64 multiboot_addr)
                  mmap = reinterpret_cast<multiboot_memory_map_t*>(reinterpret_cast<u64>(mmap) + reinterpret_cast<multiboot_tag_mmap*>(tag)->size)) {
                 printf("Section: 0x%llx, 0x%llx, 0x%llx\n", mmap->addr, mmap->type, mmap->len);
             }
-        }
+    }
 
         // TODO: ELF Section Headers
 

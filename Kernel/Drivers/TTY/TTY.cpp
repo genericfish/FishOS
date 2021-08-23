@@ -2,14 +2,15 @@
 #include <FSH/Types.h>
 
 #include <Kernel/Arch/x86_64/VGA.h>
+#include <Kernel/Drivers/TTY/TTY.h>
+#include <Kernel/Memory/Address.h>
 #include <Kernel/StdLib.h>
-#include <Kernel/TTY/TTY.h>
 
-namespace TTY {
+namespace Kernel::Drivers::TTY {
 static u16 constexpr VGA_WIDTH = 80;
 static u16 constexpr VGA_HEIGHT = 25;
 static u32 constexpr VGA_BUFFER_SIZE = VGA_HEIGHT * VGA_WIDTH;
-static u16* VGA_BUFFER = reinterpret_cast<u16*>(0xB8000ULL + 0xFFFFFFFF80000000ULL);
+static u16* VGA_BUFFER = reinterpret_cast<u16*>(0xB8000ULL + g_virtual_base_address);
 
 static u16 g_pos[2] = { 0 };
 static u8 g_color = 0;
