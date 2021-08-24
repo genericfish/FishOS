@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <sys/io.h>
 
+using namespace FSH;
+
 namespace Interrupts {
 
 void* irq_routines[16] = {};
@@ -30,7 +32,7 @@ extern "C" void irq_handler(Registers r)
 
 extern "C" void isr_handler(Registers r)
 {
-    printf("Exception 0x%x\n    CR2: 0x%llx\n    RIP: 0x%llx\n", r.intn, r.cr2, r.rip);
+    printf("Exception 0x%x\n    CR2: 0x%llx\n    CR3: 0x%llx\n    RIP: 0x%llx\n", r.intn, r.cr2, r.cr3, r.rip);
 
     asm volatile("cli");
 
