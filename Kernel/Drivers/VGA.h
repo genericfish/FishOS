@@ -3,7 +3,7 @@
 #include <FSH/Platform.h>
 #include <FSH/Types.h>
 
-namespace VGA {
+namespace Kernel::Drivers::VGA {
 enum Color : u8 {
     BLACK = 0,
     BLUE = 1,

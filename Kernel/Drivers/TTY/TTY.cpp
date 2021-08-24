@@ -1,8 +1,8 @@
 #include <FSH/Platform.h>
 #include <FSH/Types.h>
 
-#include <Kernel/Arch/x86_64/VGA.h>
 #include <Kernel/Drivers/TTY/TTY.h>
+#include <Kernel/Drivers/VGA.h>
 #include <Kernel/Memory/Address.h>
 #include <Kernel/StdLib.h>
 

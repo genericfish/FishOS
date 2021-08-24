@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Kernel/Arch/x86_64/VGA.h>
+#include <Kernel/Drivers/VGA.h>
 
 namespace Kernel::Drivers::TTY {
 
