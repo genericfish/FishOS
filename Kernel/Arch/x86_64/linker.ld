@@ -11,13 +11,13 @@ SECTIONS {
 
     .text ALIGN(4K) : AT (ADDR(.text) - VIRTUAL_BASE_ADDR) {
         _code = .;
-        *(.multiboot)
+        KEEP(*(.multiboot))
         *(.text*)
     }
 
     .rodata ALIGN(4K) : AT (ADDR(.rodata) - VIRTUAL_BASE_ADDR) {
         _rodata = .;
-        *(.rodata)
+        *(.rodata*)
 
         . = ALIGN(8);
         __CTOR_LIST__ = .;
