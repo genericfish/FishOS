@@ -3,10 +3,22 @@ add_compile_options(-Os)
 set(KERNEL_SOURCES
     Interrupts/IDT.cpp
     Interrupts/Interrupts.cpp
-    TTY/TTY.cpp
+
+    Drivers/TTY/TTY.cpp
+    Drivers/Serial/Serial.cpp
+
     Kernel.cpp
     StdLib.cpp
 )
+
+set(FSH_SOURCES
+)
+
+set(SOURCES
+    ${KERNEL_SOURCES}
+    ${FSH_SOURCES}
+)
+
 set(KERNEL_ASM ${CMAKE_CURRENT_SOURCE_DIR}/Arch/${FISH_ARCH}/boot.S)
 set(KERNEL_LD ${CMAKE_CURRENT_SOURCE_DIR}/Arch/${FISH_ARCH}/linker.ld)
 
@@ -65,7 +77,7 @@ add_custom_target(Kernel
         ${CMAKE_BINARY_DIR}/Boot/fish.kernel
 )
 
-add_library(KernelObj ${KERNEL_SOURCES})
+add_library(KernelObj ${SOURCES})
 add_dependencies(KernelObj LibK boot.o)
 
 target_compile_options(KernelObj PUBLIC ${KERNEL_CXX_FLAGS})
