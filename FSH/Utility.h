@@ -30,12 +30,20 @@ template <>
 struct make_index_sequence<1> : index_sequence<0> {
 };
 
-template<size_t N, typename T, typename... U>
+template <size_t N, typename T, typename... U>
 struct get_type {
     using type = typename get_type<N - 1, U...>::type;
 };
 
-template<typename T, typename... U>
+template <typename T, typename... U>
 struct get_type<0, T, U...> {
     using type = T;
+};
+
+template <typename T, typename U>
+struct is_same : false_type {
+};
+
+template <typename T>
+struct is_same<T, T> : true_type {
 };
