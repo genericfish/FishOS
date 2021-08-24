@@ -1,7 +1,7 @@
 #include <Kernel/Drivers/Serial/Serial.h>
 
+#include <Kernel/StdLib.h>
 #include <sys/io.h>
-#include <string.h>
 
 namespace Kernel::Drivers {
 Serial::Serial()
@@ -25,18 +25,27 @@ Serial::Serial()
     outb(COM1 + 4, 0x0F);
 }
 
-void Serial::write(char c) {
-    while (!(inb(COM1 +  5) & 0x20));
+void Serial::write(char c)
+{
+    while (!(inb(COM1 + 5) & 0x20))
+        ;
 
     outb(COM1, c);
 }
 
-void Serial::write(char const* c) {
+void Serial::write(char* c)
+{
+    write(const_cast<char const*>(c));
+}
+
+void Serial::write(char const* c)
+{
     for (auto i = 0UZ; i < strlen(c); i++)
         write(c[i]);
 }
 
-char Serial::read() {
+char Serial::read()
+{
     return inb(COM1);
 }
 

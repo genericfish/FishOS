@@ -9,6 +9,7 @@ public:
     Serial();
 
     void write(char);
+    void write(char*);
     void write(char const*);
 
     char read();
