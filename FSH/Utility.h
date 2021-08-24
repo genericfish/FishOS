@@ -2,6 +2,8 @@
 
 #include <FSH/Types.h>
 
+namespace FSH {
+
 template <size_t... I>
 struct index_sequence {
     using self_t = index_sequence;
@@ -47,3 +49,5 @@ struct is_same : false_type {
 template <typename T>
 struct is_same<T, T> : true_type {
 };
+
+}

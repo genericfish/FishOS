@@ -67,6 +67,8 @@ constexpr u64 MiB = 1ULL << 20;
 constexpr u64 GiB = 1ULL << 30;
 constexpr u64 TiB = 1ULL << 40;
 
+namespace FSH {
+
 template <class T, T v>
 struct integral_constant {
     T static constexpr value = v;
@@ -83,3 +85,5 @@ using bool_constant = integral_constant<bool, B>;
 
 using false_type = bool_constant<false>;
 using true_type = bool_constant<true>;
+
+}
