@@ -29,93 +29,40 @@ template <size_t N>
 struct multiboot_type {
     using type = multiboot_tag;
 };
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_CMDLINE> {
-    using type = multiboot_tag_string;
-};
 
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME> {
-    using type = multiboot_tag_string;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_MODULE> {
-    using type = multiboot_tag_module;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_BASIC_MEMINFO> {
-    using type = multiboot_tag_basic_meminfo;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_BOOTDEV> {
-    using type = multiboot_tag_bootdev;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_MMAP> {
-    using type = multiboot_tag_mmap;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_VBE> {
-    using type = multiboot_tag_vbe;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_FRAMEBUFFER> {
-    using type = multiboot_tag_framebuffer;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_ELF_SECTIONS> {
-    using type = multiboot_tag_elf_sections;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_APM> {
-    using type = multiboot_tag_apm;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_EFI32> {
-    using type = multiboot_tag_efi32;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_EFI64> {
-    using type = multiboot_tag_efi64;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_SMBIOS> {
-    using type = multiboot_tag_smbios;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_ACPI_OLD> {
-    using type = multiboot_tag_old_acpi;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_ACPI_NEW> {
-    using type = multiboot_tag_new_acpi;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_NETWORK> {
-    using type = multiboot_tag_network;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_EFI_MMAP> {
-    using type = multiboot_tag_efi_mmap;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_EFI32_IH> {
-    using type = multiboot_tag_efi32_ih;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_EFI64_IH> {
-    using type = multiboot_tag_efi64_ih;
-};
-template <>
-struct multiboot_type<MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR> {
-    using type = multiboot_tag_load_base_addr;
-};
+#define ADD_MULTIBOOT_TYPE(N, T) \
+    template <>                  \
+    struct multiboot_type<N> {   \
+        using type = T;          \
+    }
 
-template<size_t N>
-FLATTEN multiboot_type<N>::type* get_multiboot_tag(u64 addr) {
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_CMDLINE, multiboot_tag_string);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME, multiboot_tag_string);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_MODULE, multiboot_tag_module);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_BASIC_MEMINFO, multiboot_tag_basic_meminfo);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_BOOTDEV, multiboot_tag_bootdev);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_MMAP, multiboot_tag_mmap);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_VBE, multiboot_tag_vbe);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_FRAMEBUFFER, multiboot_tag_framebuffer);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_ELF_SECTIONS, multiboot_tag_elf_sections);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_APM, multiboot_tag_apm);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_EFI32, multiboot_tag_efi32);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_EFI64, multiboot_tag_efi64);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_SMBIOS, multiboot_tag_smbios);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_ACPI_OLD, multiboot_tag_old_acpi);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_ACPI_NEW, multiboot_tag_new_acpi);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_NETWORK, multiboot_tag_network);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_EFI_MMAP, multiboot_tag_efi_mmap);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_EFI32_IH, multiboot_tag_efi32_ih);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_EFI64_IH, multiboot_tag_efi64_ih);
+ADD_MULTIBOOT_TYPE(MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR, multiboot_tag_load_base_addr);
+
+template <size_t N>
+FLATTEN multiboot_type<N>::type* get_multiboot_tag(u64 addr)
+{
     auto* cur = reinterpret_cast<multiboot_tag*>(addr + 8);
 
-    while(true) {
+    while (true) {
         if (cur->type == MULTIBOOT_TAG_TYPE_END)
             return nullptr;
 
