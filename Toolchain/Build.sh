@@ -2,7 +2,8 @@
 set -e
 
 # Variables
-DIR=$(pwd)
+FSH_TOPLEVEL=$(git rev-parse --show-toplevel)
+DIR="${FSH_TOPLEVEL}/Toolchain"
 NTHREADS=$(($(nproc --all) + 1))
 
 # GCC/Binutils Information
@@ -26,47 +27,47 @@ BINUTILS_SIG_URL="${BINUTILS_SOURCE_URL}.sig"
 GCC_SIG_URL="${GCC_SOURCE_URL}.sig"
 
 # Download GCC/Binutils Source
-mkdir -p Tarballs
+mkdir -p ${DIR}/Tarballs
 
-if [ ! -f Tarballs/${BINUTILS_TAR} ]; then
-    wget ${BINUTILS_SOURCE_URL} -P Tarballs/
+if [ ! -f ${DIR}/Tarballs/${BINUTILS_TAR} ]; then
+    wget ${BINUTILS_SOURCE_URL} -P ${DIR}/Tarballs/
 fi
 
-if [ ! -f Tarballs/${GCC_TAR} ]; then
-    wget ${GCC_SOURCE_URL} -P Tarballs/
+if [ ! -f ${DIR}/Tarballs/${GCC_TAR} ]; then
+    wget ${GCC_SOURCE_URL} -P ${DIR}/Tarballs/
 fi
 
 # Download GCC/Binutils Signatures
-mkdir -p Signatures
+mkdir -p ${DIR}/Signatures
 
-rm -f Signatures/gnu-keyring.gpg
-wget https://ftp.gnu.org/gnu/gnu-keyring.gpg -P Signatures
+rm -f ${DIR}/Signatures/gnu-keyring.gpg
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg -P ${DIR}/Signatures
 
-if [ ! -f Signatures/${BINUTILS_TAR}.sig ]; then
-    wget ${BINUTILS_SIG_URL} -P Signatures/
+if [ ! -f ${DIR}/Signatures/${BINUTILS_TAR}.sig ]; then
+    wget ${BINUTILS_SIG_URL} -P ${DIR}/Signatures/
 fi
 
-if [ ! -f Signatures/${GCC_TAR}.sig ]; then
-    wget ${GCC_SIG_URL} -P Signatures/
+if [ ! -f ${DIR}/Signatures/${GCC_TAR}.sig ]; then
+    wget ${GCC_SIG_URL} -P ${DIR}/Signatures/
 fi
 
 # Verify Signatures
-gpg --verify --keyring Signatures/gnu-keyring.gpg Signatures/${BINUTILS_TAR}.sig Tarballs/${BINUTILS_TAR}
-gpg --verify --keyring Signatures/gnu-keyring.gpg Signatures/${GCC_TAR}.sig Tarballs/${GCC_TAR}
+gpg --verify --keyring ${DIR}/Signatures/gnu-keyring.gpg ${DIR}/Signatures/${BINUTILS_TAR}.sig ${DIR}/Tarballs/${BINUTILS_TAR}
+gpg --verify --keyring ${DIR}/Signatures/gnu-keyring.gpg ${DIR}/Signatures/${GCC_TAR}.sig ${DIR}/Tarballs/${GCC_TAR}
 
 # Cleanup existing files
-rm -rf Build
-rm -rf Local
-rm -rf Source
+rm -rf ${DIR}/Build
+rm -rf ${DIR}/Local
+rm -rf ${DIR}/Source
 
 # Recreate directories
-mkdir -p Source
-mkdir -p Build
-mkdir -p Local
+mkdir -p ${DIR}/Source
+mkdir -p ${DIR}/Build
+mkdir -p ${DIR}/Local
 
 # Extract
-tar -xf Tarballs/${BINUTILS_NAME}.tar.xz -C Source
-tar -xf Tarballs/${GCC_NAME}.tar.xz -C Source
+tar -xf ${DIR}/Tarballs/${BINUTILS_NAME}.tar.xz -C ${DIR}/Source
+tar -xf ${DIR}/Tarballs/${GCC_NAME}.tar.xz -C ${DIR}/Source
 
 export PREFIX="$DIR/Local"
 export ARCH=x86_64
