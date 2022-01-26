@@ -10,7 +10,8 @@ Currently a UNIX-like kernel for x86_64 compatible processors.
 - `ninja` ~ 1.10.2
 - `gcc` ~ 11.2
 - `wget` ~ 1.21.2
-- 
+- `tar` ~ 1.34
+- `gpg` ~ 2.2.32
 
 ### Building
 The toolchain can be built by running `Toolchain/Build.sh` from the top level project directory.
